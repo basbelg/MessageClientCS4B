@@ -40,6 +40,17 @@ public class Client implements Runnable
             {
                 //read input from server
                 Packet p = (Packet)input.readObject();
+                String type = p.getType();
+                switch(type)
+                {
+                    case "REG-MSG":
+
+                    case "PIC-MSG":
+
+                    case "CHG-MSG":
+
+                    case "TXT-MSG":
+                }
             }
         }
         catch(IOException | ClassNotFoundException e)
@@ -49,6 +60,7 @@ public class Client implements Runnable
     }
 
     public void sendMessageToServer()
+    {}
 
     public List<String> getSubscribedChannels()
     {
