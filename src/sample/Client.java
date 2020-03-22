@@ -8,8 +8,8 @@ public class Client implements Runnable
 {
     private List<String> subscribedChannels;
     private Socket clientSocket;
-    ObjectInputStream input;
-    ObjectOutputStream output;
+    private ObjectInputStream input;
+    private ObjectOutputStream output;
     private Thread thread;
 
     public Client(Socket socket)
@@ -33,16 +33,21 @@ public class Client implements Runnable
     {
         try
         {
+
             while(true)
             {
+                //read input from server
+                Packet p = new Packet(input.readObject().getType(), input.readObject().getData());
 
             }
         }
-        catch(Exception e)
+        catch(IOException | ClassNotFoundException e)
         {
-
+            e.printStackTrace();
         }
     }
+
+    public void sendMessageToServer()
 
     public List<String> getSubscribedChannels()
     {

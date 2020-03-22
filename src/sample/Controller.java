@@ -1,4 +1,8 @@
 package sample;
 
-public class Controller {
+import javax.swing.*;
+
+public class Controller
+{
+
 }
