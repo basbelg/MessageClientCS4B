@@ -1,5 +1,8 @@
 package sample;
 
+
+import Messages.Packet;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
@@ -33,12 +36,10 @@ public class Client implements Runnable
     {
         try
         {
-
             while(true)
             {
                 //read input from server
-                Packet p = new Packet(input.readObject().getType(), input.readObject().getData());
-
+                Packet p = (Packet)input.readObject();
             }
         }
         catch(IOException | ClassNotFoundException e)
