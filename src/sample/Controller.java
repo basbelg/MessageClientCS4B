@@ -4,15 +4,16 @@ import javax.swing.*;
 import javax.swing.text.html.ImageView;
 
 import Interfaces.ClientListener;
-import Messages.ChannelMsg;
-import Messages.Packet;
-import Messages.RegistrationMsg;
+import Messages.*;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.control.Button;
+import javafx.scene.media.MediaView;
 
 import java.util.List;
 import java.util.Observable;
@@ -24,6 +25,8 @@ public class Controller extends Observable implements ClientListener //2 listene
     public TextField inputField;
     public Button sendMessageButton;
     public TextArea outField;
+    public ComboBox chatroomsBar;
+    public MediaView mv;
 
     public void sendButtonClicked()
     {
@@ -44,24 +47,38 @@ public class Controller extends Observable implements ClientListener //2 listene
     }
 
     @Override
-    public void update(Observable o, Object arg)
+    public void update(Object arg)
     {
         if(arg instanceof RegistrationMsg)
         {
-
+            String text = outField.getText();
+            text += ((RegistrationMsg) arg).getUsername() + " has joined the chat!\n";
+            outField.setText(text);
+            //update chatbar
         }
         else if(arg instanceof ChannelMsg)
         {
             String text = outField.getText();
-            text += "\n" + ((ChannelMsg) arg).getSender() + ": " + ((ChannelMsg) arg).getTextMsg();
+            text += ((ChannelMsg) arg).getSender() + ": " + ((ChannelMsg) arg).getTextMsg();
             outField.setText(text);
+        }
+        else if(arg instanceof PictureMsg)
+        {
+
+        }
+        else if(arg instanceof ChangeChannelMsg)
+        {
+
         }
     }
 
     @Override
     public void notifyObservers(Object arg)
     {
-
+        for(Client c : clients)
+        {
+            c.update(arg);
+        }
     }
 
     public void uploadPicClicked()

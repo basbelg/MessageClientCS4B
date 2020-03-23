@@ -3,8 +3,7 @@ package Interfaces;
 import java.util.Observable;
 import java.util.Observer;
 
-public interface ControllerListener extends Observer
+public interface ControllerListener
 {
-    @Override
-    void update(Observable o, Object arg);
+    void update(Object arg);
 }

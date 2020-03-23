@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
 <SplitPane dividerPositions="0.7512562814070352" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <items>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
             <children>
-                <TextArea fx:id="outField" layoutX="25.0" layoutY="82.0" prefHeight="200.0" prefWidth="320.0" />
+                <TextArea fx:id="outField" editable="false" layoutX="25.0" layoutY="82.0" prefHeight="200.0" prefWidth="320.0" />
                 <Label layoutX="25.0" layoutY="65.0" text="Chat Name:" />
                 <Label layoutX="25.0" layoutY="48.0" text="Server:" />
                 <ComboBox fx:id="chatroomsBar" layoutX="376.0" layoutY="57.0" prefWidth="150.0" promptText="Chatrooms" />
                 <ComboBox fx:id="usersBar" layoutX="195.0" layoutY="57.0" prefWidth="150.0" promptText="Users" />
                 <Button fx:id="swapChatroomsButton" layoutX="526.0" layoutY="57.0" mnemonicParsing="false" text="Swap" />
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="61.0" layoutY="207.0" pickOnBounds="true" preserveRatio="true" />
             </children></AnchorPane>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
             <children>
