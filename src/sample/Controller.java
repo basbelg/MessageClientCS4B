@@ -19,21 +19,21 @@ import java.util.List;
 import java.util.Observable;
 
 
-public class Controller extends Observable implements ClientListener //2 listeners client <-> controller
+public class Controller  implements ClientListener //2 listeners client <-> controller
 {
     private List<Client> clients;
     public TextField inputField;
     public Button sendMessageButton;
     public TextArea outField;
     public ComboBox chatroomsBar;
-    public MediaView mv;
+    public String currentChannel;
 
     public void sendButtonClicked()
     {
         String text = inputField.getText();
         inputField.clear();
-
-        notifyObservers(text);
+        ChannelMsg cm = new ChannelMsg(text, currentChannel);
+        notifyObservers(cm);
     }
 
     public void addClient(Client c)
@@ -72,7 +72,6 @@ public class Controller extends Observable implements ClientListener //2 listene
         }
     }
 
-    @Override
     public void notifyObservers(Object arg)
     {
         for(Client c : clients)

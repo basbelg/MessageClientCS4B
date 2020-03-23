@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-public class Client extends Observable implements Runnable, ControllerListener
+public class Client implements Runnable, ControllerListener
 {
     private List<Controller> controllers;
     private List<String> subscribedChannels;
@@ -27,7 +27,7 @@ public class Client extends Observable implements Runnable, ControllerListener
         {
             subscribedChannels = new ArrayList<>();
             controllers = new ArrayList<>();
-            controllers.add(new Controller());
+            addController(new Controller());
             clientSocket = socket;
             port = socket.getPort();
             input = new ObjectInputStream(socket.getInputStream());
@@ -49,8 +49,8 @@ public class Client extends Observable implements Runnable, ControllerListener
             subscribedChannels = new ArrayList<>();
             controllers = new ArrayList<>();
             controllers.add(new Controller());
-            clientSocket = new Socket();
             port = 8000;
+            clientSocket = new Socket("localhost", port);
             input = new ObjectInputStream(clientSocket.getInputStream());
             output = new ObjectOutputStream(clientSocket.getOutputStream());
             thread = new Thread(this);
@@ -84,12 +84,15 @@ public class Client extends Observable implements Runnable, ControllerListener
                         break;
                     case "PIC-MSG":
                         PictureMsg pm = (PictureMsg)p.getData();
+                        notifyObservers(pm);
                         break;
                     case "CHG-MSG":
                         ChangeChannelMsg cm = (ChangeChannelMsg)p.getData();
+                        notifyObservers(cm);
                         break;
                     case "TXT-MSG":
                         ChannelMsg tm = (ChannelMsg)p.getData();
+                        notifyObservers(tm);
                         break;
                     default:
                         System.out.println("ERROR");
@@ -145,8 +148,6 @@ public class Client extends Observable implements Runnable, ControllerListener
         controllers.remove(c);
     }
 
-
-    @Override
     public void notifyObservers(Object arg)
     {
         for(Controller c : controllers)
