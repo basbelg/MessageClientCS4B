@@ -28,17 +28,16 @@ public class Controller implements ClientListener //2 listeners client <-> contr
     public TextField inputField;
     public Button sendMessageButton;
     public DialogPane outField;
-
+    public ComboBox chatroomsBar;
     public String currentChannel;
 
 
     public void sendButtonClicked()
     {
-        String text = outField.getContentText();
-        text += inputField.getText() + "\n";
-        outField.setContentText(text);
+        String text = inputField.getText() + "\n";
         inputField.clear();
         ChannelMsg cm = new ChannelMsg(text, currentChannel);
+inputField.setText("cm message sent");
         notifyObserver(cm);
     }
 
@@ -94,6 +93,9 @@ public class Controller implements ClientListener //2 listeners client <-> contr
     public void swapButtonClicked()
     {
         //make changechannelmsg and notify
-
+        String swapTo = chatroomsBar.getAccessibleText();
+        ChangeChannelMsg cc = new ChangeChannelMsg(swapTo);
+inputField.setText("ccm sent");
+        notifyObserver(cc);
     }
 }
