@@ -1,14 +1,17 @@
 package sample;
 
 
-import Messages.Packet;
+import Interfaces.ControllerListener;
+import Messages.*;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
+import java.util.Observable;
 
-public class Client implements Runnable
+public class Client extends Observable implements Runnable, ControllerListener
 {
+    private List<Controller> controllers;
     private List<String> subscribedChannels;
     private Socket clientSocket;
     private ObjectInputStream input;
@@ -44,12 +47,20 @@ public class Client implements Runnable
                 switch(type)
                 {
                     case "REG-MSG":
-
+                        RegistrationMsg rm = (RegistrationMsg)p.getData();
+                        notifyObservers(rm);
+                        break;
                     case "PIC-MSG":
-
+                        PictureMsg pm = (PictureMsg)p.getData();
+                        break;
                     case "CHG-MSG":
-
+                        ChangeChannelMsg cm = (ChangeChannelMsg)p.getData();
+                        break;
                     case "TXT-MSG":
+                        ChannelMsg tm = (ChannelMsg)p.getData();
+                        break;
+                    default:
+                        System.out.println("ERROR");
                 }
             }
         }
@@ -59,11 +70,32 @@ public class Client implements Runnable
         }
     }
 
-    public void sendMessageToServer()
-    {}
 
     public List<String> getSubscribedChannels()
     {
         return subscribedChannels;
+    }
+
+    @Override
+    public void update(Observable o, Object arg)
+    {
+
+    }
+
+    public void addController(Controller c)
+    {
+        controllers.add(c);
+    }
+
+    public void removeController(Controller c)
+    {
+        controllers.remove(c);
+    }
+
+
+    @Override
+    public void notifyObservers(Object arg)
+    {
+        super.notifyObservers(arg);
     }
 }
