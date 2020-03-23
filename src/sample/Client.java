@@ -1,6 +1,7 @@
 package sample;
 
 
+import Interfaces.ClientListener;
 import Interfaces.ControllerListener;
 import Messages.*;
 
@@ -12,8 +13,9 @@ import java.util.Observable;
 
 public class Client implements Runnable, ControllerListener
 {
-    private List<Controller> controllers;
+    private ClientListener controller;
     private List<String> subscribedChannels;
+    private String currentChannel;
     private Socket clientSocket;
     private ObjectInputStream input;
     private ObjectOutputStream output;
@@ -22,12 +24,10 @@ public class Client implements Runnable, ControllerListener
 
     public Client(Socket socket)
     {
-        super();
         try
         {
             subscribedChannels = new ArrayList<>();
-            controllers = new ArrayList<>();
-            addController(new Controller());
+            //addController(Controller(this));
             clientSocket = socket;
             port = socket.getPort();
             input = new ObjectInputStream(socket.getInputStream());
@@ -43,12 +43,10 @@ public class Client implements Runnable, ControllerListener
 
     public Client()
     {
-        super();
         try
         {
             subscribedChannels = new ArrayList<>();
-            controllers = new ArrayList<>();
-            controllers.add(new Controller());
+           // addController(new Controller(this));
             port = 8000;
             clientSocket = new Socket("localhost", port);
             input = new ObjectInputStream(clientSocket.getInputStream());
@@ -80,19 +78,21 @@ public class Client implements Runnable, ControllerListener
                         {
                             subscribedChannels.add(sc);
                         }
-                        notifyObservers(rm);
+                        currentChannel = subscribedChannels.get(0);
+                        notifyObserver(rm);
                         break;
                     case "PIC-MSG":
                         PictureMsg pm = (PictureMsg)p.getData();
-                        notifyObservers(pm);
+                        notifyObserver(pm);
                         break;
                     case "CHG-MSG":
                         ChangeChannelMsg cm = (ChangeChannelMsg)p.getData();
-                        notifyObservers(cm);
+                        currentChannel = cm.getSwappedChannel();
+                        notifyObserver(cm);
                         break;
                     case "TXT-MSG":
                         ChannelMsg tm = (ChannelMsg)p.getData();
-                        notifyObservers(tm);
+                        notifyObserver(tm);
                         break;
                     default:
                         System.out.println("ERROR");
@@ -138,21 +138,13 @@ public class Client implements Runnable, ControllerListener
         }
     }
 
-    public void addController(Controller c)
+    public void addController(ClientListener c)
     {
-        controllers.add(c);
+        controller = c;
     }
 
-    public void removeController(Controller c)
+    public void notifyObserver(Object arg)
     {
-        controllers.remove(c);
-    }
-
-    public void notifyObservers(Object arg)
-    {
-        for(Controller c : controllers)
-        {
-            c.update(arg);
-        }
+        controller.update(arg);
     }
 }

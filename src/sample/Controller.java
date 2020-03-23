@@ -1,49 +1,50 @@
 package sample;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.text.html.ImageView;
 
 import Interfaces.ClientListener;
+import Interfaces.ControllerListener;
 import Messages.*;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.Group;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.control.Button;
 import javafx.scene.media.MediaView;
-
-import java.util.List;
-import java.util.Observable;
+import javafx.scene.text.TextFlow;
 
 
-public class Controller  implements ClientListener //2 listeners client <-> controller
+import java.awt.image.BufferedImage;
+import java.io.*;
+
+
+public class Controller implements ClientListener //2 listeners client <-> controller
 {
-    private List<Client> clients;
+    private ControllerListener client;
     public TextField inputField;
     public Button sendMessageButton;
-    public TextArea outField;
-    public ComboBox chatroomsBar;
+    public DialogPane outField;
+
     public String currentChannel;
+
 
     public void sendButtonClicked()
     {
-        String text = inputField.getText();
+        String text = outField.getContentText();
+        text += inputField.getText() + "\n";
+        outField.setContentText(text);
         inputField.clear();
         ChannelMsg cm = new ChannelMsg(text, currentChannel);
-        notifyObservers(cm);
+        notifyObserver(cm);
     }
 
-    public void addClient(Client c)
+    public void addClient(ControllerListener c)
     {
-        clients.add(c);
-    }
-
-    public void removeClient(Client c)
-    {
-        clients.remove(c);
+        client = c;
     }
 
     @Override
@@ -51,37 +52,48 @@ public class Controller  implements ClientListener //2 listeners client <-> cont
     {
         if(arg instanceof RegistrationMsg)
         {
-            String text = outField.getText();
+            String text = outField.getAccessibleText();
             text += ((RegistrationMsg) arg).getUsername() + " has joined the chat!\n";
-            outField.setText(text);
+            outField.setAccessibleText(text);
             //update chatbar
         }
         else if(arg instanceof ChannelMsg)
         {
-            String text = outField.getText();
-            text += ((ChannelMsg) arg).getSender() + ": " + ((ChannelMsg) arg).getTextMsg();
-            outField.setText(text);
+            StringBuffer text = new StringBuffer(outField.getAccessibleText());
+            text.append(((ChannelMsg) arg).getSender() + ": " + ((ChannelMsg) arg).getTextMsg());
+            outField.setAccessibleText(text.toString());
         }
         else if(arg instanceof PictureMsg)
         {
-
+            try {
+                ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) arg).getPicData());
+                BufferedImage bImage2 = ImageIO.read(bis);
+                //push to display
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
         }
         else if(arg instanceof ChangeChannelMsg)
         {
-
+            currentChannel = ((ChangeChannelMsg) arg).getSwappedChannel();
         }
     }
 
-    public void notifyObservers(Object arg)
+    public void notifyObserver(Object arg)
     {
-        for(Client c : clients)
-        {
-            c.update(arg);
-        }
+        client.update(arg);
     }
 
     public void uploadPicClicked()
     {
+        //open directory and load pic
+    }
+
+    public void swapButtonClicked()
+    {
+        //make changechannelmsg and notify
 
     }
 }
