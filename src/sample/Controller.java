@@ -67,16 +67,17 @@ public class Controller
     {
         if(arg instanceof RegistrationMsg)
         {
-            outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!\n"));
+            outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!"));
             initChatroomBar(((RegistrationMsg) arg).getSubscribedChannels());
         }
         else if(arg instanceof ChannelMsg)
         {
-            outField.getItems().add(new Label(((ChannelMsg) arg).getSender() + ": " + ((ChannelMsg) arg).getTextMsg() + "\n"));
+            outField.getItems().add(new Label(((ChannelMsg) arg).getSender() + ": " + ((ChannelMsg) arg).getTextMsg()));
         }
         else if(arg instanceof PictureMsg)
         {
-            try {
+            try
+            {
                 ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) arg).getPicData());
                 BufferedImage bufImg = ImageIO.read(bis);
                 Image image = SwingFXUtils.toFXImage(bufImg, null);
@@ -112,11 +113,11 @@ public class Controller
             {
                 if(history.get(i) instanceof ChannelMsg)
                 {
-                    outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg() + "\n"));
+                    outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg()));
                 }
                 else if(history.get(i) instanceof RegistrationMsg)
                 {
-                    outField.getItems().add(new Label(((RegistrationMsg) history.get(i)).getUsername() + " has joined the chat!\n"));
+                    outField.getItems().add(new Label(((RegistrationMsg) history.get(i)).getUsername() + " has joined the chat!"));
                 }
                 else if(history.get(i) instanceof PictureMsg)
                 {
