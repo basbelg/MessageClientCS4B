@@ -63,13 +63,12 @@ public class Controller
         client.update(cm);
     }
 
-    public void update(Object arg)
+    public void update(Serializable arg)
     {
         if(arg instanceof RegistrationMsg)
         {
             outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!\n"));
             initChatroomBar(((RegistrationMsg) arg).getSubscribedChannels());
-            //update chatbar
         }
         else if(arg instanceof ChannelMsg)
         {
@@ -207,7 +206,7 @@ public class Controller
             channels.add(chat6.getText());
         }
         RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
-        //client.update(rm);
+        client.update(rm);
         try
         {
             Stage stage = (Stage) loginButton.getScene().getWindow();

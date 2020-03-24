@@ -92,7 +92,7 @@ public class Client implements Runnable
     }
 
 
-    public void update(Object arg)
+    public void update(Serializable arg)
     {
         try {
             if (arg instanceof RegistrationMsg) {
