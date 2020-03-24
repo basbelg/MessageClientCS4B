@@ -5,8 +5,6 @@ import javax.swing.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import Interfaces.ClientListener;
-import Interfaces.ControllerListener;
 import Messages.*;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -40,23 +38,25 @@ public class Controller
     public Button sendMessageButton;
     public ListView outField;
     public ComboBox chatroomsBar;
+    public Label userLabel;
     private String currentChannel;
     public Label channelLabel;
-
-    public Controller()
-    {
-
-    }
+    public Button loginButton;
+    public TextField loginUserField;
+    public CheckBox chat1;
+    public CheckBox chat2;
+    public CheckBox chat3;
+    public CheckBox chat4;
+    public CheckBox chat5;
+    public CheckBox chat6;
 
     public void sendButtonClicked()
     {
         String text = inputField.getText() + "\n";
         inputField.clear();
         ChannelMsg cm = new ChannelMsg(text, currentChannel);
-        notifyObserver(cm);
     }
 
-    @Override
     public void update(Object arg)
     {
         if(arg instanceof RegistrationMsg)
@@ -125,19 +125,6 @@ public class Controller
         notifyObserver(cc);
     }
 
-    public Button loginButton;
-    public TextField loginUserField;
-    public CheckBox chat1;
-    public CheckBox chat2;
-    public CheckBox chat3;
-    public CheckBox chat4;
-    public CheckBox chat5;
-    public CheckBox chat6;
-
-    public void addClient(Client c)
-    {
-        client = c;
-    }
 
     public void loginClicked()
     {
@@ -168,7 +155,6 @@ public class Controller
         {
             channels.add(chat6.getText());
         }
-
         RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
         try
         {
@@ -184,5 +170,6 @@ public class Controller
         {
             e.printStackTrace();
         }
+        userLabel.setText("Username: " + user);
     }
 }

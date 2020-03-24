@@ -1,6 +1,6 @@
 package sample;
 
-import Interfaces.ControllerListener;
+
 import Messages.RegistrationMsg;
 import com.sun.media.jfxmediaimpl.platform.Platform;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +17,6 @@ import java.util.List;
 
 public class Login
 {
-    private ControllerListener client;
     public Button loginButton;
     public TextField loginUserField;
     public CheckBox chat1;
@@ -26,11 +25,6 @@ public class Login
     public CheckBox chat4;
     public CheckBox chat5;
     public CheckBox chat6;
-
-    public void addClient(Client c)
-    {
-        client = c;
-    }
 
     public void loginClicked()
     {

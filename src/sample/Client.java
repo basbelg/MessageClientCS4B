@@ -1,8 +1,5 @@
 package sample;
 
-
-import Interfaces.ClientListener;
-import Interfaces.ControllerListener;
 import Messages.*;
 
 import java.io.*;
@@ -57,19 +54,19 @@ public class Client implements Runnable
                         {
                             subscribedChannels.add(sc);
                         }
-                        notifyObserver(rm);
+
                         break;
                     case "PIC-MSG":
                         PictureMsg pm = (PictureMsg)p.getData();
-                        notifyObserver(pm);
+
                         break;
                     case "CHG-MSG":
                         ChangeChannelMsg cm = (ChangeChannelMsg)p.getData();
-                        notifyObserver(cm);
+
                         break;
                     case "TXT-MSG":
                         ChannelMsg tm = (ChannelMsg)p.getData();
-                        notifyObserver(tm);
+
                         break;
                     default:
                         System.out.println("ERROR");
@@ -92,7 +89,7 @@ public class Client implements Runnable
         return subscribedChannels;
     }
 
-    @Override
+
     public void update(Object arg)
     {
         try {
