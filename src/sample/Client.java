@@ -22,31 +22,11 @@ public class Client implements Runnable, ControllerListener
     private Thread thread;
     private int port;
 
-    public Client(Socket socket)
-    {
-        try
-        {
-            subscribedChannels = new ArrayList<>();
-            //addController(Controller(this));
-            clientSocket = socket;
-            port = socket.getPort();
-            input = new ObjectInputStream(socket.getInputStream());
-            output = new ObjectOutputStream(socket.getOutputStream());
-            thread = new Thread(this);
-            thread.start();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
     public Client()
     {
         try
         {
             subscribedChannels = new ArrayList<>();
-           // addController(new Controller(this));
             port = 8000;
             clientSocket = new Socket("localhost", port);
             input = new ObjectInputStream(clientSocket.getInputStream());
@@ -87,7 +67,6 @@ public class Client implements Runnable, ControllerListener
                         break;
                     case "CHG-MSG":
                         ChangeChannelMsg cm = (ChangeChannelMsg)p.getData();
-                        currentChannel = cm.getSwappedChannel();
                         notifyObserver(cm);
                         break;
                     case "TXT-MSG":
