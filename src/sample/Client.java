@@ -15,7 +15,6 @@ public class Client implements Runnable, ControllerListener
 {
     private ClientListener controller;
     private List<String> subscribedChannels;
-    private String currentChannel;
     private Socket clientSocket;
     private ObjectInputStream input;
     private ObjectOutputStream output;
@@ -58,7 +57,6 @@ public class Client implements Runnable, ControllerListener
                         {
                             subscribedChannels.add(sc);
                         }
-                        currentChannel = subscribedChannels.get(0);
                         notifyObserver(rm);
                         break;
                     case "PIC-MSG":

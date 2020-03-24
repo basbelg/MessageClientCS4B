@@ -18,7 +18,7 @@
             <children>
                 <Button fx:id="sendMessageButton" layoutX="347.0" layoutY="36.0" mnemonicParsing="false" onMouseClicked="#sendButtonClicked" prefHeight="25.0" prefWidth="60.0" text="Send" />
                 <TextField fx:id="inputField" layoutX="27.0" layoutY="36.0" prefHeight="25.0" prefWidth="320.0" promptText="Send Message..." />
-                <Button fx:id="addPicButton" layoutX="2.0" layoutY="36.0" mnemonicParsing="false" text="+" />
+                <Button fx:id="addPicButton" layoutX="2.0" layoutY="36.0" mnemonicParsing="false" onMouseClicked="#uploadPicClicked" text="+" />
                 <Button layoutX="490.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Connect" />
                 <Button layoutX="490.0" layoutY="51.0" mnemonicParsing="false" text="Disconnect" />
                 <Label layoutX="27.0" layoutY="18.0" text="Username" />

@@ -3,6 +3,7 @@ package sample;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import java.util.List;
 import Interfaces.ClientListener;
 import Interfaces.ControllerListener;
 import Messages.*;
@@ -10,14 +11,19 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.MediaView;
 import javafx.scene.text.TextFlow;
+import javafx.stage.FileChooser;
 
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
@@ -37,7 +43,6 @@ public class Controller implements ClientListener //2 listeners client <-> contr
         String text = inputField.getText() + "\n";
         inputField.clear();
         ChannelMsg cm = new ChannelMsg(text, currentChannel);
-inputField.setText("cm message sent");
         notifyObserver(cm);
     }
 
@@ -61,9 +66,11 @@ inputField.setText("cm message sent");
         else if(arg instanceof PictureMsg)
         {
             try {
+                Label img = new Label();
                 ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) arg).getPicData());
                 BufferedImage bImage2 = ImageIO.read(bis);
-                //push to display
+                img.setGraphic(new ImageView(String.valueOf(bImage2)));
+                outField.getItems().add(img);
             }
             catch (IOException e)
             {
@@ -73,6 +80,24 @@ inputField.setText("cm message sent");
         else if(arg instanceof ChangeChannelMsg)
         {
             currentChannel = ((ChangeChannelMsg) arg).getSwappedChannel();
+            outField.getItems().clear();
+            List<Serializable> history = ((ChangeChannelMsg) arg).getChatHistory();
+            for(int i = 0; i < history.size(); i++)
+            {
+                if(history.get(i) instanceof ChannelMsg)
+                {
+                    outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg() + "\n"));
+                }
+                else if(history.get(i) instanceof RegistrationMsg)
+                {
+                    outField.getItems().add(new Label(((RegistrationMsg) history.get(i)).getUsername() + " has joined the chat!\n"));
+                }
+                else if(history.get(i) instanceof PictureMsg)
+                {
+
+                }
+
+            }
         }
     }
 
@@ -81,17 +106,16 @@ inputField.setText("cm message sent");
         client.update(arg);
     }
 
-    public void uploadPicClicked()
+    public void uploadPicClicked() throws IOException
     {
-        //open directory and load pic
+        FileChooser fileChooser = new FileChooser();
+
     }
 
     public void swapButtonClicked()
     {
-        //make changechannelmsg and notify
         String swapTo = chatroomsBar.getAccessibleText();
         ChangeChannelMsg cc = new ChangeChannelMsg(swapTo);
-inputField.setText("ccm sent");
         notifyObserver(cc);
     }
 }

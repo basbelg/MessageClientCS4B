@@ -60,8 +60,17 @@ public class Login
         {
             channels.add(chat6.getText());
         }
-        RegistrationMsg rm = new RegistrationMsg(user, channels);
+        RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
         notifyObserver(rm);
+        try {
+            Stage primaryStage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getResource("chatrooms.fxml"));
+            primaryStage.setTitle("Login");
+            primaryStage.setScene(new Scene(root, 600, 575));
+            primaryStage.show();
+        }
+        catch(IOException e)
+        {}
     }
 
     public void notifyObserver(RegistrationMsg args)
