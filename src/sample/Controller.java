@@ -3,10 +3,12 @@ package sample;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
 import Messages.*;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
@@ -21,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.MediaView;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -34,6 +37,7 @@ import java.io.*;
 public class Controller
 {
     private Client client = new Client(this);
+    public Button addPicButton;
     public TextField inputField;
     public Button sendMessageButton;
     public ListView outField;
@@ -56,6 +60,7 @@ public class Controller
         String text = inputField.getText() + "\n";
         inputField.clear();
         ChannelMsg cm = new ChannelMsg(text, currentChannel);
+        client.update(cm);
     }
 
     public void update(Object arg)
@@ -63,6 +68,7 @@ public class Controller
         if(arg instanceof RegistrationMsg)
         {
             outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!\n"));
+            initChatroomBar(((RegistrationMsg) arg).getSubscribedChannels());
             //update chatbar
         }
         else if(arg instanceof ChannelMsg)
@@ -72,11 +78,25 @@ public class Controller
         else if(arg instanceof PictureMsg)
         {
             try {
-                Label img = new Label();
                 ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) arg).getPicData());
-                BufferedImage bImage2 = ImageIO.read(bis);
-                img.setGraphic(new ImageView(String.valueOf(bImage2)));
-                outField.getItems().add(img);
+                BufferedImage bufImg = ImageIO.read(bis);
+                Image image = SwingFXUtils.toFXImage(bufImg, null);
+                ImageView iv = new ImageView(image);
+                double oldVar;
+                if(image.getHeight() > outField.getHeight()/4)
+                {
+                    oldVar = iv.getFitHeight();
+                    iv.setFitHeight(outField.getHeight()/4);
+                    iv.setFitWidth(iv.getFitWidth() - (oldVar - iv.getFitHeight()));
+                }
+                if(image.getWidth() > outField.getWidth()/4)
+                {
+                    oldVar = iv.getFitWidth();
+                    iv.setFitWidth(outField.getWidth()/4);
+                    iv.setFitHeight(iv.getFitHeight() - (oldVar - iv.getFitWidth()));
+                }
+                outField.getItems().add(new Label(((PictureMsg) arg).getSender() + ":"));
+                outField.getItems().add(iv);
             }
             catch (IOException e)
             {
@@ -101,6 +121,32 @@ public class Controller
                 }
                 else if(history.get(i) instanceof PictureMsg)
                 {
+                    try
+                    {
+                        ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) history.get(i)).getPicData());
+                        BufferedImage bufImg = ImageIO.read(bis);
+                        Image image = SwingFXUtils.toFXImage(bufImg, null);
+                        ImageView iv = new ImageView(image);
+                        double oldVar;
+                        if(image.getHeight() > outField.getHeight()/4)
+                        {
+                            oldVar = iv.getFitHeight();
+                            iv.setFitHeight(outField.getHeight()/4);
+                            iv.setFitWidth(iv.getFitWidth() - (oldVar - iv.getFitHeight()));
+                        }
+                        if(image.getWidth() > outField.getWidth()/4)
+                        {
+                            oldVar = iv.getFitWidth();
+                            iv.setFitWidth(outField.getWidth()/4);
+                            iv.setFitHeight(iv.getFitHeight() - (oldVar - iv.getFitWidth()));
+                        }
+                        outField.getItems().add(new Label(((PictureMsg) arg).getSender() + ":"));
+                        outField.getItems().add(iv);
+                    }
+                    catch(IOException e)
+                    {
+                        e.printStackTrace();
+                    }
 
                 }
 
@@ -111,8 +157,16 @@ public class Controller
 
     public void uploadPicClicked() throws IOException
     {
+        Stage stage = (Stage) addPicButton.getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
-
+        fileChooser.setTitle("Open Resource File");
+        File file = fileChooser.showOpenDialog(stage);
+        BufferedImage bufImg = ImageIO.read(file);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(bufImg, "jpg", bos);
+        byte [] picData = bos.toByteArray();
+        PictureMsg pm = new PictureMsg(picData, currentChannel);
+        client.update(pm);
     }
 
     public void swapButtonClicked()
@@ -153,6 +207,7 @@ public class Controller
             channels.add(chat6.getText());
         }
         RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
+        //client.update(rm);
         try
         {
             Stage stage = (Stage) loginButton.getScene().getWindow();
@@ -167,6 +222,27 @@ public class Controller
         {
             e.printStackTrace();
         }
-        client.update(rm);
+    }
+
+    public void initChatroomBar(List<String> channels)
+    {
+        for(int i = 0; i < channels.size(); i++)
+        {
+            chatroomsBar.getItems().add(channels.get(i));
+        }
+    }
+
+    public void onNameEntered()
+    {
+        if(!loginUserField.getText().equals(""))
+        {
+            loginButton.setDisable(false);
+        }
+        else
+        {
+            loginButton.setDisable(true);
+        }
     }
 }
+
+
