@@ -27,7 +27,7 @@ public class Controller implements ClientListener //2 listeners client <-> contr
     private ControllerListener client;
     public TextField inputField;
     public Button sendMessageButton;
-    public DialogPane outField;
+    public ListView outField;
     public ComboBox chatroomsBar;
     public String currentChannel;
 
@@ -51,16 +51,12 @@ inputField.setText("cm message sent");
     {
         if(arg instanceof RegistrationMsg)
         {
-            String text = outField.getAccessibleText();
-            text += ((RegistrationMsg) arg).getUsername() + " has joined the chat!\n";
-            outField.setAccessibleText(text);
+            outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!\n"));
             //update chatbar
         }
         else if(arg instanceof ChannelMsg)
         {
-            StringBuffer text = new StringBuffer(outField.getAccessibleText());
-            text.append(((ChannelMsg) arg).getSender() + ": " + ((ChannelMsg) arg).getTextMsg());
-            outField.setAccessibleText(text.toString());
+            outField.getItems().add(new Label(((ChannelMsg) arg).getSender() + ": " + ((ChannelMsg) arg).getTextMsg() + "\n"));
         }
         else if(arg instanceof PictureMsg)
         {
