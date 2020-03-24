@@ -77,14 +77,6 @@ public class Login
         {
             e.printStackTrace();
         }
-        notifyObserver(rm);
-
     }
-
-    public void notifyObserver(RegistrationMsg args)
-    {
-        client.update(args);
-    }
-
 
 }

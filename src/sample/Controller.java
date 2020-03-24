@@ -3,13 +3,17 @@ package sample;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import Interfaces.ClientListener;
 import Interfaces.ControllerListener;
 import Messages.*;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,6 +25,7 @@ import javafx.scene.layout.*;
 import javafx.scene.media.MediaView;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 
 import java.awt.*;
@@ -28,9 +33,9 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 
 
-public class Controller implements ClientListener //2 listeners client <-> controller
+public class Controller
 {
-    private ControllerListener client;
+    private Client client;
     public TextField inputField;
     public Button sendMessageButton;
     public ListView outField;
@@ -49,11 +54,6 @@ public class Controller implements ClientListener //2 listeners client <-> contr
         inputField.clear();
         ChannelMsg cm = new ChannelMsg(text, currentChannel);
         notifyObserver(cm);
-    }
-
-    public void addClient(ControllerListener c)
-    {
-        client = c;
     }
 
     @Override
@@ -123,5 +123,66 @@ public class Controller implements ClientListener //2 listeners client <-> contr
         String swapTo = chatroomsBar.getAccessibleText();
         ChangeChannelMsg cc = new ChangeChannelMsg(swapTo);
         notifyObserver(cc);
+    }
+
+    public Button loginButton;
+    public TextField loginUserField;
+    public CheckBox chat1;
+    public CheckBox chat2;
+    public CheckBox chat3;
+    public CheckBox chat4;
+    public CheckBox chat5;
+    public CheckBox chat6;
+
+    public void addClient(Client c)
+    {
+        client = c;
+    }
+
+    public void loginClicked()
+    {
+        String user = loginUserField.getText();
+        List<String> channels = new ArrayList<>();
+
+        if(chat1.isSelected())
+        {
+            channels.add(chat1.getText());
+        }
+        if(chat2.isSelected())
+        {
+            channels.add(chat2.getText());
+        }
+        if(chat3.isSelected())
+        {
+            channels.add(chat3.getText());
+        }
+        if(chat4.isSelected())
+        {
+            channels.add(chat4.getText());
+        }
+        if(chat5.isSelected())
+        {
+            channels.add(chat5.getText());
+        }
+        if(chat6.isSelected())
+        {
+            channels.add(chat6.getText());
+        }
+
+        RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
+        try
+        {
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            stage.close();
+            stage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getResource("chatrooms.fxml"));
+            stage.setTitle("Chatrooms");
+            stage.setScene(new Scene(root));
+            stage.show();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

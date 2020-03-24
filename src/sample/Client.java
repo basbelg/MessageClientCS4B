@@ -11,9 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-public class Client implements Runnable, ControllerListener
+public class Client implements Runnable
 {
-    private ClientListener controller;
     private List<String> subscribedChannels;
     private Socket clientSocket;
     private ObjectInputStream input;
@@ -118,15 +117,5 @@ public class Client implements Runnable, ControllerListener
         {
             e.printStackTrace();
         }
-    }
-
-    public void addController(ClientListener c)
-    {
-        controller = c;
-    }
-
-    public void notifyObserver(Object arg)
-    {
-        controller.update(arg);
     }
 }
