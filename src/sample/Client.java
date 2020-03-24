@@ -10,6 +10,7 @@ import java.util.Observable;
 
 public class Client implements Runnable
 {
+    private Controller controller;
     private List<String> subscribedChannels;
     private Socket clientSocket;
     private ObjectInputStream input;
@@ -17,13 +18,15 @@ public class Client implements Runnable
     private Thread thread;
     private int port;
     private boolean isRunning = true;
+    private Serializable latestMessage;
 
-    public Client()
+    public Client(Controller controller)
     {
         try
         {
             subscribedChannels = new ArrayList<>();
             port = 8000;
+            this.controller = controller;
             clientSocket = new Socket("localhost", port);
             input = new ObjectInputStream(clientSocket.getInputStream());
             output = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -54,19 +57,19 @@ public class Client implements Runnable
                         {
                             subscribedChannels.add(sc);
                         }
-
+                        controller.update(rm);
                         break;
                     case "PIC-MSG":
                         PictureMsg pm = (PictureMsg)p.getData();
-
+                        controller.update(pm);
                         break;
                     case "CHG-MSG":
                         ChangeChannelMsg cm = (ChangeChannelMsg)p.getData();
-
+                        controller.update(cm);
                         break;
                     case "TXT-MSG":
                         ChannelMsg tm = (ChannelMsg)p.getData();
-
+                        controller.update(tm);
                         break;
                     default:
                         System.out.println("ERROR");
@@ -82,7 +85,6 @@ public class Client implements Runnable
             isRunning = false;
         }
     }
-
 
     public List<String> getSubscribedChannels()
     {

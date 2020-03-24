@@ -33,7 +33,7 @@ import java.io.*;
 
 public class Controller
 {
-    private Client client;
+    private Client client = new Client(this);
     public TextField inputField;
     public Button sendMessageButton;
     public ListView outField;
@@ -49,6 +49,7 @@ public class Controller
     public CheckBox chat4;
     public CheckBox chat5;
     public CheckBox chat6;
+
 
     public void sendButtonClicked()
     {
@@ -107,10 +108,6 @@ public class Controller
         }
     }
 
-    public void notifyObserver(Object arg)
-    {
-        client.update(arg);
-    }
 
     public void uploadPicClicked() throws IOException
     {
@@ -122,7 +119,7 @@ public class Controller
     {
         String swapTo = chatroomsBar.getAccessibleText();
         ChangeChannelMsg cc = new ChangeChannelMsg(swapTo);
-        notifyObserver(cc);
+        client.update(cc);
     }
 
 
@@ -170,6 +167,6 @@ public class Controller
         {
             e.printStackTrace();
         }
-        userLabel.setText("Username: " + user);
+        client.update(rm);
     }
 }
