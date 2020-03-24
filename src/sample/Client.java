@@ -20,6 +20,7 @@ public class Client implements Runnable, ControllerListener
     private ObjectOutputStream output;
     private Thread thread;
     private int port;
+    private boolean isRunning = true;
 
     public Client()
     {
@@ -44,7 +45,7 @@ public class Client implements Runnable, ControllerListener
     {
         try
         {
-            while(true)
+            while(isRunning)
             {
                 //read input from server
                 Packet p = (Packet)input.readObject();
@@ -79,6 +80,10 @@ public class Client implements Runnable, ControllerListener
         catch(IOException | ClassNotFoundException e)
         {
             e.printStackTrace();
+        }
+        finally
+        {
+            isRunning = false;
         }
     }
 

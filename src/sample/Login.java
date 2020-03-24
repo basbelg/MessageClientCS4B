@@ -2,6 +2,7 @@ package sample;
 
 import Interfaces.ControllerListener;
 import Messages.RegistrationMsg;
+import com.sun.media.jfxmediaimpl.platform.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -31,11 +32,11 @@ public class Login
         client = c;
     }
 
-
     public void loginClicked()
     {
         String user = loginUserField.getText();
         List<String> channels = new ArrayList<>();
+
         if(chat1.isSelected())
         {
             channels.add(chat1.getText());
@@ -60,17 +61,24 @@ public class Login
         {
             channels.add(chat6.getText());
         }
+
         RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
-        notifyObserver(rm);
-        try {
-            Stage primaryStage = new Stage();
+        try
+        {
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            stage.close();
+            stage = new Stage();
             Parent root = FXMLLoader.load(getClass().getResource("chatrooms.fxml"));
-            primaryStage.setTitle("Login");
-            primaryStage.setScene(new Scene(root, 600, 575));
-            primaryStage.show();
+            stage.setTitle("Chatrooms");
+            stage.setScene(new Scene(root));
+            stage.show();
         }
-        catch(IOException e)
-        {}
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        notifyObserver(rm);
+
     }
 
     public void notifyObserver(RegistrationMsg args)

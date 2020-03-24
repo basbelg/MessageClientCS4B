@@ -35,8 +35,13 @@ public class Controller implements ClientListener //2 listeners client <-> contr
     public Button sendMessageButton;
     public ListView outField;
     public ComboBox chatroomsBar;
-    public String currentChannel;
+    private String currentChannel;
+    public Label channelLabel;
 
+    public Controller()
+    {
+
+    }
 
     public void sendButtonClicked()
     {
@@ -80,6 +85,7 @@ public class Controller implements ClientListener //2 listeners client <-> contr
         else if(arg instanceof ChangeChannelMsg)
         {
             currentChannel = ((ChangeChannelMsg) arg).getSwappedChannel();
+            channelLabel.setText("Channel: " + currentChannel);
             outField.getItems().clear();
             List<Serializable> history = ((ChangeChannelMsg) arg).getChatHistory();
             for(int i = 0; i < history.size(); i++)
