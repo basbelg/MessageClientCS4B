@@ -27,9 +27,7 @@ public class PictureMsg  implements Serializable {
 
     public String toString() {return "In " + publishToChannel + ": " + sender + " posted a picture";}
 
-    public void setPicData(byte[] picData) {
-        this.picData = picData;
-    }
+    public void setPicData(byte[] picData) { this.picData = picData; }
 
     public void setPublishToChannel(String publishToChannel) {
         this.publishToChannel = publishToChannel;
