@@ -2,59 +2,54 @@ package sample;
 
 import Messages.*;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
 public class Client implements Runnable
 {
-    private Controller controller;
+    private BaseController controller;
     private List<String> subscribedChannels;
     private Socket clientSocket;
     private ObjectInputStream input;
     private ObjectOutputStream output;
     private Thread thread;
     private int port;
-    private boolean isRunning = true;
-    private Serializable latestMessage;
+    private String username;
 
-    public Client(Controller controller)
+    public Client(BaseController controller)
     {
-        try
-        {
-            subscribedChannels = new ArrayList<>();
-            port = 8000;
-            this.controller = controller;
-            clientSocket = new Socket("localhost", port);
-            input = new ObjectInputStream(clientSocket.getInputStream());
-            output = new ObjectOutputStream(clientSocket.getOutputStream());
-            thread = new Thread(this);
-            thread.start();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        subscribedChannels = new ArrayList<>();
+        port = 8000;
+        this.controller = controller;
+        thread = new Thread(this);
+        System.out.print("Before start");
+        thread.start();
+        System.out.print("After Start");
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
-            while(isRunning)
-            {
+    public void run() {
+        System.out.print("Entered run");
+        try {
+            System.out.print("Before socket");
+            clientSocket = new Socket("localhost", port);
+            System.out.print("After socket");
+            output = new ObjectOutputStream(clientSocket.getOutputStream());
+            input = new ObjectInputStream(clientSocket.getInputStream());
+
+            while(!thread.isInterrupted()) {
                 //read input from server
                 Packet p = (Packet)input.readObject();
                 String type = p.getType();
-                switch(type)
-                {
+                switch(type) {
                     case "REG-MSG":
                         RegistrationMsg rm = (RegistrationMsg)p.getData();
-                        for(String sc : rm.getSubscribedChannels())
-                        {
+                        for(String sc : rm.getSubscribedChannels()) {
                             subscribedChannels.add(sc);
                         }
                         controller.update(rm);
@@ -63,7 +58,7 @@ public class Client implements Runnable
                         PictureMsg pm = (PictureMsg)p.getData();
                         controller.update(pm);
                         break;
-                    case "CHG-MSG":
+                    case "CNG-MSG":
                         ChangeChannelMsg cm = (ChangeChannelMsg)p.getData();
                         controller.update(cm);
                         break;
@@ -76,45 +71,65 @@ public class Client implements Runnable
                 }
             }
         }
-        catch(IOException | ClassNotFoundException e)
-        {
+        catch(IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        finally
-        {
-            isRunning = false;
+        finally {
+            System.out.println("client thread terminated");
         }
     }
 
-    public List<String> getSubscribedChannels()
-    {
+    // need a new button to call this
+    public void terminateThread() {
+        thread.interrupt();
+        try {
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> getSubscribedChannels() {
         return subscribedChannels;
     }
 
+    public String getUsername() {
+        return username;
+    }
 
-    public void update(Serializable arg)
-    {
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void update(Serializable arg) {
         try {
+
             if (arg instanceof RegistrationMsg) {
-                Packet p = new Packet("REG-MSG", (RegistrationMsg) arg);
+                Packet p = new Packet("REG-MSG", arg);
                 output.writeObject(p);
             }
             else if (arg instanceof ChannelMsg) {
-                Packet p = new Packet("TXT-MSG", (ChannelMsg) arg);
+                Packet p = new Packet("TXT-MSG", arg);
                 output.writeObject(p);
             }
             else if (arg instanceof ChangeChannelMsg) {
-                Packet p = new Packet("CHG-MSG", (ChangeChannelMsg) arg);
+                Packet p = new Packet("CNG-MSG", arg);
                 output.writeObject(p);
             }
             else if (arg instanceof PictureMsg) {
-                Packet p = new Packet("PIC-MSG", (PictureMsg) arg);
+                Packet p = new Packet("PIC-MSG", arg);
                 output.writeObject(p);
             }
+            else {
+                System.out.println("Client Update - ERROR");
+            }
         }
-        catch(IOException e)
-        {
+        catch(IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void SetController(BaseController con) {
+        controller = con;
     }
 }
