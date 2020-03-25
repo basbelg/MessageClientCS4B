@@ -57,7 +57,7 @@ public class Controller
 
     public void sendButtonClicked()
     {
-        String text = inputField.getText() + "\n";
+        String text = inputField.getText();
         inputField.clear();
         ChannelMsg cm = new ChannelMsg(text, currentChannel);
         client.update(cm);
@@ -207,7 +207,7 @@ public class Controller
             channels.add(chat6.getText());
         }
         RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
-        client.update(rm);
+       // client.update(rm);
         try
         {
             Stage stage = (Stage) loginButton.getScene().getWindow();
