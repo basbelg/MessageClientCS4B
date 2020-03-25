@@ -32,28 +32,23 @@ public class Client implements Runnable
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         System.out.print("Entered run");
-        try
-        {
+        try {
             System.out.print("Before socket");
             clientSocket = new Socket("localhost", port);
             System.out.print("After socket");
             output = new ObjectOutputStream(clientSocket.getOutputStream());
             input = new ObjectInputStream(clientSocket.getInputStream());
 
-            while(isRunning)
-            {
+            while(isRunning) {
                 //read input from server
                 Packet p = (Packet)input.readObject();
                 String type = p.getType();
-                switch(type)
-                {
+                switch(type) {
                     case "REG-MSG":
                         RegistrationMsg rm = (RegistrationMsg)p.getData();
-                        for(String sc : rm.getSubscribedChannels())
-                        {
+                        for(String sc : rm.getSubscribedChannels()) {
                             subscribedChannels.add(sc);
                         }
                         controller.update(rm);
@@ -75,26 +70,21 @@ public class Client implements Runnable
                 }
             }
         }
-        catch(IOException | ClassNotFoundException e)
-        {
+        catch(IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        finally
-        {
+        finally {
             isRunning = false;
         }
     }
 
-    public List<String> getSubscribedChannels()
-    {
+    public List<String> getSubscribedChannels() {
         return subscribedChannels;
     }
 
 
     public void update(Serializable arg) {
-
-        try
-        {
+        try {
 
             if (arg instanceof RegistrationMsg) {
                 Packet p = new Packet("REG-MSG", arg);
@@ -113,14 +103,12 @@ public class Client implements Runnable
                 output.writeObject(p);
             }
         }
-        catch(IOException e)
-        {
+        catch(IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void SetController(BaseController con)
-    {
+    public void SetController(BaseController con) {
         controller = con;
     }
 }
