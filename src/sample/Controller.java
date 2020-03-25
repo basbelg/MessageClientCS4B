@@ -55,8 +55,7 @@ public class Controller
     public CheckBox chat6;
 
 
-    public void sendButtonClicked()
-    {
+    public void sendButtonClicked() throws IOException {
         String text = inputField.getText() + "\n";
         inputField.clear();
         ChannelMsg cm = new ChannelMsg(text, currentChannel);
@@ -169,16 +168,14 @@ public class Controller
         client.update(pm);
     }
 
-    public void swapButtonClicked()
-    {
+    public void swapButtonClicked() throws IOException {
         String swapTo = chatroomsBar.getAccessibleText();
         ChangeChannelMsg cc = new ChangeChannelMsg(swapTo);
         client.update(cc);
     }
 
 
-    public void loginClicked()
-    {
+    public void loginClicked() throws IOException {
         String user = loginUserField.getText();
         List<String> channels = new ArrayList<>();
 
