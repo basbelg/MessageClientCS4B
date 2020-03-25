@@ -36,7 +36,6 @@ public class Client implements Runnable
         {
             clientSocket = new Socket("localhost", port);
             input = new ObjectInputStream(clientSocket.getInputStream());
-            output = new ObjectOutputStream(clientSocket.getOutputStream());
 
             while(isRunning)
             {
@@ -89,20 +88,22 @@ public class Client implements Runnable
     public void update(Serializable arg)
     {
         try {
+            output = new ObjectOutputStream(clientSocket.getOutputStream());
+
             if (arg instanceof RegistrationMsg) {
-                Packet p = new Packet("REG-MSG", (RegistrationMsg) arg);
+                Packet p = new Packet("REG-MSG", arg);
                 output.writeObject(p);
             }
             else if (arg instanceof ChannelMsg) {
-                Packet p = new Packet("TXT-MSG", (ChannelMsg) arg);
+                Packet p = new Packet("TXT-MSG", arg);
                 output.writeObject(p);
             }
             else if (arg instanceof ChangeChannelMsg) {
-                Packet p = new Packet("CHG-MSG", (ChangeChannelMsg) arg);
+                Packet p = new Packet("CHG-MSG", arg);
                 output.writeObject(p);
             }
             else if (arg instanceof PictureMsg) {
-                Packet p = new Packet("PIC-MSG", (PictureMsg) arg);
+                Packet p = new Packet("PIC-MSG", arg);
                 output.writeObject(p);
             }
         }
