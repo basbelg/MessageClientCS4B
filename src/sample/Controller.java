@@ -207,7 +207,7 @@ public class Controller
             channels.add(chat6.getText());
         }
         RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
-       // client.update(rm);
+        client.update(rm);
         try
         {
             Stage stage = (Stage) loginButton.getScene().getWindow();
