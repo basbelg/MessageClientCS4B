@@ -2,11 +2,13 @@ package sample;
 
 import Messages.*;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
 public class Client implements Runnable
 {
@@ -17,7 +19,6 @@ public class Client implements Runnable
     private ObjectOutputStream output;
     private Thread thread;
     private int port;
-    private boolean isRunning = true;
     private String username;
 
     public Client(BaseController controller)
@@ -41,7 +42,7 @@ public class Client implements Runnable
             output = new ObjectOutputStream(clientSocket.getOutputStream());
             input = new ObjectInputStream(clientSocket.getInputStream());
 
-            while(isRunning) {
+            while(!thread.isInterrupted()) {
                 //read input from server
                 Packet p = (Packet)input.readObject();
                 String type = p.getType();
@@ -74,7 +75,17 @@ public class Client implements Runnable
             e.printStackTrace();
         }
         finally {
-            isRunning = false;
+            System.out.println("client thread terminated");
+        }
+    }
+
+    // need a new button to call this
+    public void terminateThread() {
+        thread.interrupt();
+        try {
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
