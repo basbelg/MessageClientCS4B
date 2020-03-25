@@ -22,21 +22,11 @@ public class Client implements Runnable
 
     public Client(Controller controller)
     {
-        try
-        {
-            subscribedChannels = new ArrayList<>();
-            port = 8000;
-            this.controller = controller;
-            clientSocket = new Socket("localhost", port);
-            input = new ObjectInputStream(clientSocket.getInputStream());
-            output = new ObjectOutputStream(clientSocket.getOutputStream());
-            thread = new Thread(this);
-            thread.start();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        subscribedChannels = new ArrayList<>();
+        port = 8000;
+        this.controller = controller;
+        thread = new Thread(this);
+        thread.start();
     }
 
     @Override
@@ -44,6 +34,10 @@ public class Client implements Runnable
     {
         try
         {
+            clientSocket = new Socket("localhost", port);
+            input = new ObjectInputStream(clientSocket.getInputStream());
+            output = new ObjectOutputStream(clientSocket.getOutputStream());
+
             while(isRunning)
             {
                 //read input from server
