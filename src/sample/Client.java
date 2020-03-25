@@ -10,7 +10,7 @@ import java.util.Observable;
 
 public class Client implements Runnable
 {
-    private Controller controller;
+    private BaseController controller;
     private List<String> subscribedChannels;
     private Socket clientSocket;
     private ObjectInputStream input;
@@ -18,23 +18,29 @@ public class Client implements Runnable
     private Thread thread;
     private int port;
     private boolean isRunning = true;
-    private Serializable latestMessage;
+    private String username;
 
-    public Client(Controller controller)
+    public Client(BaseController controller)
     {
         subscribedChannels = new ArrayList<>();
         port = 8000;
         this.controller = controller;
         thread = new Thread(this);
+        System.out.print("Before start");
         thread.start();
+        System.out.print("After Start");
     }
 
     @Override
     public void run()
     {
+        System.out.print("Entered run");
         try
         {
+            System.out.print("Before socket");
             clientSocket = new Socket("localhost", port);
+            System.out.print("After socket");
+            output = new ObjectOutputStream(clientSocket.getOutputStream());
             input = new ObjectInputStream(clientSocket.getInputStream());
 
             while(isRunning)
@@ -56,7 +62,7 @@ public class Client implements Runnable
                         PictureMsg pm = (PictureMsg)p.getData();
                         controller.update(pm);
                         break;
-                    case "CHG-MSG":
+                    case "CNG-MSG":
                         ChangeChannelMsg cm = (ChangeChannelMsg)p.getData();
                         controller.update(cm);
                         break;
@@ -84,11 +90,18 @@ public class Client implements Runnable
         return subscribedChannels;
     }
 
+    public String getUsername() {
+        return username;
+    }
 
-    public void update(Serializable arg)
-    {
-        try {
-            output = new ObjectOutputStream(clientSocket.getOutputStream());
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void update(Serializable arg) {
+
+        try
+        {
 
             if (arg instanceof RegistrationMsg) {
                 Packet p = new Packet("REG-MSG", arg);
@@ -99,7 +112,7 @@ public class Client implements Runnable
                 output.writeObject(p);
             }
             else if (arg instanceof ChangeChannelMsg) {
-                Packet p = new Packet("CHG-MSG", arg);
+                Packet p = new Packet("CNG-MSG", arg);
                 output.writeObject(p);
             }
             else if (arg instanceof PictureMsg) {
@@ -111,5 +124,10 @@ public class Client implements Runnable
         {
             e.printStackTrace();
         }
+    }
+
+    public void SetController(BaseController con)
+    {
+        controller = con;
     }
 }

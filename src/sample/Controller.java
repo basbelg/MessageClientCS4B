@@ -3,6 +3,7 @@ package sample;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import java.net.URL;
 import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -32,11 +34,12 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.ResourceBundle;
 
 
-public class Controller
+public class Controller implements Initializable, BaseController
 {
-    private Client client = new Client(this);
+    private Client client;
     public Button addPicButton;
     public TextField inputField;
     public Button sendMessageButton;
@@ -45,19 +48,10 @@ public class Controller
     public Label userLabel;
     private String currentChannel;
     public Label channelLabel;
-    public Button loginButton;
-    public TextField loginUserField;
-    public CheckBox chat1;
-    public CheckBox chat2;
-    public CheckBox chat3;
-    public CheckBox chat4;
-    public CheckBox chat5;
-    public CheckBox chat6;
 
 
-    public void sendButtonClicked()
-    {
-        String text = inputField.getText();
+    public void sendButtonClicked() throws IOException {
+        String text = inputField.getText() + "\n";
         inputField.clear();
         ChannelMsg cm = new ChannelMsg(text, currentChannel);
         client.update(cm);
@@ -68,8 +62,15 @@ public class Controller
         SwingUtilities.invokeLater(() -> {
             if(arg instanceof RegistrationMsg)
             {
-                outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!"));
-                initChatroomBar(((RegistrationMsg) arg).getSubscribedChannels());
+                if(((RegistrationMsg) arg).getUsername().equals(client.getUsername()))
+                {
+                    initChatroomBar(((RegistrationMsg) arg).getSubscribedChannels());
+                }
+                else
+                {
+                    outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!"));
+                }
+
             }
             else if(arg instanceof ChannelMsg)
             {
@@ -169,60 +170,24 @@ public class Controller
         client.update(pm);
     }
 
-    public void swapButtonClicked()
-    {
+    public void swapButtonClicked() throws IOException {
+        currentChannel = chatroomsBar.getAccessibleText();
         String swapTo = chatroomsBar.getAccessibleText();
         ChangeChannelMsg cc = new ChangeChannelMsg(swapTo);
         client.update(cc);
     }
 
 
-    public void loginClicked()
-    {
-        String user = loginUserField.getText();
-        List<String> channels = new ArrayList<>();
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) { }
 
-        if(chat1.isSelected())
-        {
-            channels.add(chat1.getText());
-        }
-        if(chat2.isSelected())
-        {
-            channels.add(chat2.getText());
-        }
-        if(chat3.isSelected())
-        {
-            channels.add(chat3.getText());
-        }
-        if(chat4.isSelected())
-        {
-            channels.add(chat4.getText());
-        }
-        if(chat5.isSelected())
-        {
-            channels.add(chat5.getText());
-        }
-        if(chat6.isSelected())
-        {
-            channels.add(chat6.getText());
-        }
-        RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
-        currentChannel = channels.get(0);
+    public void getDataFromLogin(Client c, RegistrationMsg rm, String curChannel, String username)
+    {
+        client = c;
+        client.SetController(this);
         client.update(rm);
-        try
-        {
-            Stage stage = (Stage) loginButton.getScene().getWindow();
-            stage.close();
-            stage = new Stage();
-            Parent root = FXMLLoader.load(getClass().getResource("chatrooms.fxml"));
-            stage.setTitle("Chatrooms");
-            stage.setScene(new Scene(root));
-            stage.show();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+        currentChannel = curChannel;
+        client.setUsername(username);
     }
 
     public void initChatroomBar(List<String> channels)
@@ -230,18 +195,6 @@ public class Controller
         for(int i = 0; i < channels.size(); i++)
         {
             chatroomsBar.getItems().add(channels.get(i));
-        }
-    }
-
-    public void onNameEntered()
-    {
-        if(!loginUserField.getText().equals(""))
-        {
-            loginButton.setDisable(false);
-        }
-        else
-        {
-            loginButton.setDisable(true);
         }
     }
 }
