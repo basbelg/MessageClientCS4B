@@ -8,6 +8,7 @@ import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
 import Messages.*;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
@@ -57,77 +58,69 @@ public class Controller implements Initializable, BaseController
     }
 
     public void update(Serializable arg) {
-        SwingUtilities.invokeLater(() -> {
-            if(arg instanceof RegistrationMsg) {
-                if(((RegistrationMsg) arg).getUsername().equals(client.getUsername())) {
+        Platform.runLater(() -> {
+            if (arg instanceof RegistrationMsg) {
+                if (((RegistrationMsg) arg).getUsername().equals(client.getUsername())) {
                     initChatroomBar(((RegistrationMsg) arg).getSubscribedChannels());
-                }
-                else {
+                } else {
                     outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!"));
                 }
 
-            }
-            else if(arg instanceof ChannelMsg) {
+            } else if (arg instanceof ChannelMsg) {
                 outField.getItems().add(new Label(((ChannelMsg) arg).getSender() + ": " + ((ChannelMsg) arg).getTextMsg()));
-            }
-            else if(arg instanceof PictureMsg) {
+            } else if (arg instanceof PictureMsg) {
                 try {
                     ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) arg).getPicData());
                     BufferedImage bufImg = ImageIO.read(bis);
                     Image image = SwingFXUtils.toFXImage(bufImg, null);
                     ImageView iv = new ImageView(image);
                     double oldVar;
-                    if(image.getHeight() > outField.getHeight()/4) {
+                    if (image.getHeight() > outField.getHeight() / 4) {
                         oldVar = iv.getFitHeight();
-                        iv.setFitHeight(outField.getHeight()/4);
+                        iv.setFitHeight(outField.getHeight() / 4);
                         iv.setFitWidth(iv.getFitWidth() - (oldVar - iv.getFitHeight()));
                     }
-                    if(image.getWidth() > outField.getWidth()/4) {
+                    if (image.getWidth() > outField.getWidth() / 4) {
                         oldVar = iv.getFitWidth();
-                        iv.setFitWidth(outField.getWidth()/4);
+                        iv.setFitWidth(outField.getWidth() / 4);
                         iv.setFitHeight(iv.getFitHeight() - (oldVar - iv.getFitWidth()));
                     }
                     outField.getItems().add(new Label(((PictureMsg) arg).getSender() + ":"));
                     outField.getItems().add(iv);
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-            else if(arg instanceof ChangeChannelMsg) {
+            } else if (arg instanceof ChangeChannelMsg) {
                 System.out.println("ERROR ERROR");
                 currentChannel = ((ChangeChannelMsg) arg).getSwappedChannel();
                 channelLabel.setText("Channel: " + currentChannel);
                 outField.getItems().clear();
                 List<Serializable> history = ((ChangeChannelMsg) arg).getChatHistory();
-                for(int i = 0; i < history.size(); i++) {
-                    if(history.get(i) instanceof ChannelMsg) {
+                for (int i = 0; i < history.size(); i++) {
+                    if (history.get(i) instanceof ChannelMsg) {
                         outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg()));
-                    }
-                    else if(history.get(i) instanceof RegistrationMsg) {
+                    } else if (history.get(i) instanceof RegistrationMsg) {
                         outField.getItems().add(new Label(((RegistrationMsg) history.get(i)).getUsername() + " has joined the chat!"));
-                    }
-                    else if(history.get(i) instanceof PictureMsg) {
+                    } else if (history.get(i) instanceof PictureMsg) {
                         try {
                             ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) history.get(i)).getPicData());
                             BufferedImage bufImg = ImageIO.read(bis);
                             Image image = SwingFXUtils.toFXImage(bufImg, null);
                             ImageView iv = new ImageView(image);
                             double oldVar;
-                            if(image.getHeight() > outField.getHeight()/4) {
+                            if (image.getHeight() > outField.getHeight() / 4) {
                                 oldVar = iv.getFitHeight();
-                                iv.setFitHeight(outField.getHeight()/4);
+                                iv.setFitHeight(outField.getHeight() / 4);
                                 iv.setFitWidth(iv.getFitWidth() - (oldVar - iv.getFitHeight()));
                             }
-                            if(image.getWidth() > outField.getWidth()/4) {
+                            if (image.getWidth() > outField.getWidth() / 4) {
                                 oldVar = iv.getFitWidth();
-                                iv.setFitWidth(outField.getWidth()/4);
+                                iv.setFitWidth(outField.getWidth() / 4);
                                 iv.setFitHeight(iv.getFitHeight() - (oldVar - iv.getFitWidth()));
                             }
                             outField.getItems().add(new Label(((PictureMsg) arg).getSender() + ":"));
                             outField.getItems().add(iv);
-                        }
-                        catch(IOException e) {
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
