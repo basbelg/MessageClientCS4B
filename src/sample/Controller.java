@@ -106,7 +106,7 @@ public class Controller implements Initializable, BaseController
                 }
             }
             else if(arg instanceof ChangeChannelMsg)
-            {
+            { System.out.println("ERROR ERROR");
                 currentChannel = ((ChangeChannelMsg) arg).getSwappedChannel();
                 channelLabel.setText("Channel: " + currentChannel);
                 outField.getItems().clear();
@@ -171,9 +171,8 @@ public class Controller implements Initializable, BaseController
     }
 
     public void swapButtonClicked() throws IOException {
-        currentChannel = chatroomsBar.getAccessibleText();
-        String swapTo = chatroomsBar.getAccessibleText();
-        ChangeChannelMsg cc = new ChangeChannelMsg(swapTo);
+        currentChannel = (String) chatroomsBar.getValue();
+        ChangeChannelMsg cc = new ChangeChannelMsg(currentChannel);
         client.update(cc);
     }
 

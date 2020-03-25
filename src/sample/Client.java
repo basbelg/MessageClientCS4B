@@ -119,6 +119,9 @@ public class Client implements Runnable
                 Packet p = new Packet("PIC-MSG", arg);
                 output.writeObject(p);
             }
+            else {
+                System.out.println("Client Update - ERROR");
+            }
         }
         catch(IOException e)
         {
