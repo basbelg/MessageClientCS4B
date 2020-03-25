@@ -27,18 +27,13 @@ public class Client implements Runnable
         port = 8000;
         this.controller = controller;
         thread = new Thread(this);
-        System.out.print("Before start");
         thread.start();
-        System.out.print("After Start");
     }
 
     @Override
     public void run() {
-        System.out.print("Entered run");
         try {
-            System.out.print("Before socket");
             clientSocket = new Socket("localhost", port);
-            System.out.print("After socket");
             output = new ObjectOutputStream(clientSocket.getOutputStream());
             input = new ObjectInputStream(clientSocket.getInputStream());
 
@@ -60,7 +55,6 @@ public class Client implements Runnable
                         break;
                     case "CNG-MSG":
                         ChangeChannelMsg cm = (ChangeChannelMsg)p.getData();
-                        System.out.println(cm.getChatHistory().size());
                         controller.update(cm);
                         break;
                     case "TXT-MSG":

@@ -95,7 +95,6 @@ public class Controller implements Initializable, BaseController
                 channelLabel.setText("Channel: " + currentChannel);
                 outField.getItems().clear();
                 List<Serializable> history = ((ChangeChannelMsg) arg).getChatHistory();
-                System.out.println(history.size());
                 for (int i = 0; i < history.size(); i++) {
                     if (history.get(i) instanceof ChannelMsg) {
                         outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg()));
