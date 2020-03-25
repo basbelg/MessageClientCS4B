@@ -18,7 +18,7 @@ public class Client implements Runnable
     private Thread thread;
     private int port;
     private boolean isRunning = true;
-    private Serializable latestMessage;
+    private String username;
 
     public Client(BaseController controller)
     {
@@ -82,6 +82,13 @@ public class Client implements Runnable
         return subscribedChannels;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public void update(Serializable arg) {
         try {
@@ -101,6 +108,9 @@ public class Client implements Runnable
             else if (arg instanceof PictureMsg) {
                 Packet p = new Packet("PIC-MSG", arg);
                 output.writeObject(p);
+            }
+            else {
+                System.out.println("Client Update - ERROR");
             }
         }
         catch(IOException e) {

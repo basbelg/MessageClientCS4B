@@ -50,7 +50,6 @@ public class Controller implements Initializable, BaseController
     public Label channelLabel;
 
 
-
     public void sendButtonClicked() throws IOException {
         String text = inputField.getText() + "\n";
         inputField.clear();
@@ -63,8 +62,15 @@ public class Controller implements Initializable, BaseController
         SwingUtilities.invokeLater(() -> {
             if(arg instanceof RegistrationMsg)
             {
-                outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!"));
-                initChatroomBar(((RegistrationMsg) arg).getSubscribedChannels());
+                if(((RegistrationMsg) arg).getUsername().equals(client.getUsername()))
+                {
+                    initChatroomBar(((RegistrationMsg) arg).getSubscribedChannels());
+                }
+                else
+                {
+                    outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!"));
+                }
+
             }
             else if(arg instanceof ChannelMsg)
             {
@@ -100,7 +106,7 @@ public class Controller implements Initializable, BaseController
                 }
             }
             else if(arg instanceof ChangeChannelMsg)
-            {
+            { System.out.println("ERROR ERROR");
                 currentChannel = ((ChangeChannelMsg) arg).getSwappedChannel();
                 channelLabel.setText("Channel: " + currentChannel);
                 outField.getItems().clear();
@@ -165,8 +171,8 @@ public class Controller implements Initializable, BaseController
     }
 
     public void swapButtonClicked() throws IOException {
-        String swapTo = chatroomsBar.getAccessibleText();
-        ChangeChannelMsg cc = new ChangeChannelMsg(swapTo);
+        currentChannel = (String) chatroomsBar.getValue();
+        ChangeChannelMsg cc = new ChangeChannelMsg(currentChannel);
         client.update(cc);
     }
 
@@ -174,12 +180,13 @@ public class Controller implements Initializable, BaseController
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) { }
 
-    public void getDataFromLogin(Client c, RegistrationMsg rm, String curChannel)
+    public void getDataFromLogin(Client c, RegistrationMsg rm, String curChannel, String username)
     {
         client = c;
         client.SetController(this);
         client.update(rm);
         currentChannel = curChannel;
+        client.setUsername(username);
     }
 
     public void initChatroomBar(List<String> channels)

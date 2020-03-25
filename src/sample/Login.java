@@ -66,17 +66,11 @@ public class Login implements BaseController
             FXMLLoader loader = new FXMLLoader(getClass().getResource("chatrooms.fxml"));
             Parent root = loader.load();
             Controller con = loader.getController();
+            con.getDataFromLogin(client, rm, channels.get(0), user);
             stage = new Stage();
             stage.setTitle("Chatrooms");
             stage.setScene(new Scene(root));
             stage.show();
-            con.getDataFromLogin(client, rm, channels.get(0));
-            /*
-            stage = new Stage();
-            Parent root = FXMLLoader.load(getClass().getResource("chatrooms.fxml"));
-            stage.setTitle("Chatrooms");
-            stage.setScene(new Scene(root));
-            stage.show();*/
         }
         catch(Exception e)
         {
