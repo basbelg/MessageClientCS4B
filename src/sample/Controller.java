@@ -47,6 +47,7 @@ public class Controller implements Initializable, BaseController
     public ListView outField;
     public ComboBox chatroomsBar;
     public Label userLabel;
+    public Label serverLabel;
     private String currentChannel;
     public Label channelLabel;
 
@@ -65,7 +66,6 @@ public class Controller implements Initializable, BaseController
                 } else {
                     outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!"));
                 }
-
             } else if (arg instanceof ChannelMsg) {
                 outField.getItems().add(new Label(((ChannelMsg) arg).getSender() + ": " + ((ChannelMsg) arg).getTextMsg()));
             } else if (arg instanceof PictureMsg) {
@@ -91,7 +91,6 @@ public class Controller implements Initializable, BaseController
                     e.printStackTrace();
                 }
             } else if (arg instanceof ChangeChannelMsg) {
-                System.out.println("ERROR ERROR");
                 currentChannel = ((ChangeChannelMsg) arg).getSwappedChannel();
                 channelLabel.setText("Channel: " + currentChannel);
                 outField.getItems().clear();
@@ -118,13 +117,16 @@ public class Controller implements Initializable, BaseController
                                 iv.setFitWidth(outField.getWidth() / 4);
                                 iv.setFitHeight(iv.getFitHeight() - (oldVar - iv.getFitWidth()));
                             }
-                            outField.getItems().add(new Label(((PictureMsg) arg).getSender() + ":"));
+                            outField.getItems().add(new Label(((PictureMsg) history.get(i)).getSender() + ":"));
                             outField.getItems().add(iv);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
+            }
+            else {
+                System.out.println("Controller Update ERROR: No matching message type");
             }
         });
     }
@@ -158,6 +160,9 @@ public class Controller implements Initializable, BaseController
         client.update(rm);
         currentChannel = curChannel;
         client.setUsername(username);
+
+        userLabel.setText(username);
+        serverLabel.setText("Server: Connected!");
     }
 
     public void initChatroomBar(List<String> channels) {
