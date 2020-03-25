@@ -60,6 +60,7 @@ public class Client implements Runnable
                         break;
                     case "CNG-MSG":
                         ChangeChannelMsg cm = (ChangeChannelMsg)p.getData();
+                        System.out.println(cm.getChatHistory().size());
                         controller.update(cm);
                         break;
                     case "TXT-MSG":

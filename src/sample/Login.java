@@ -30,7 +30,7 @@ public class Login implements BaseController
     public CheckBox chat5;
     public CheckBox chat6;
 
-    public void loginClicked() throws IOException {
+    public void loginClicked() {
         String user = loginUserField.getText();
         List<String> channels = new ArrayList<>();
 
@@ -58,23 +58,23 @@ public class Login implements BaseController
         {
             channels.add(chat6.getText());
         }
-        RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
-        try
-        {
-            Stage stage = (Stage) loginButton.getScene().getWindow();
-            stage.close();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("chatrooms.fxml"));
-            Parent root = loader.load();
-            Controller con = loader.getController();
-            con.getDataFromLogin(client, rm, channels.get(0), user);
-            stage = new Stage();
-            stage.setTitle("Chatrooms");
-            stage.setScene(new Scene(root));
-            stage.show();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
+
+        if(channels.size() != 0) {
+            RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
+            try {
+                Stage stage = (Stage) loginButton.getScene().getWindow();
+                stage.close();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("chatrooms.fxml"));
+                Parent root = loader.load();
+                Controller con = loader.getController();
+                con.getDataFromLogin(client, rm, channels.get(0), user);
+                stage = new Stage();
+                stage.setTitle("Chatrooms");
+                stage.setScene(new Scene(root));
+                stage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
