@@ -1,40 +1,23 @@
 package sample;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
-import java.net.URL;
-import java.nio.Buffer;
-import java.util.ArrayList;
-import java.util.List;
-import Messages.*;
+import Messages.ChangeChannelMsg;
+import Messages.ChannelMsg;
+import Messages.PictureMsg;
+import Messages.RegistrationMsg;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.media.MediaView;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-
-import java.awt.*;
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -134,6 +117,7 @@ public class Controller implements Initializable, BaseController
     public void uploadPicClicked() throws IOException {
         Stage stage = (Stage) addPicButton.getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("jpg files", "*.jpg"));
         fileChooser.setTitle("Open Resource File");
         File file = fileChooser.showOpenDialog(stage);
         BufferedImage bufImg = ImageIO.read(file);
