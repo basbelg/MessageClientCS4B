@@ -70,6 +70,10 @@ public class Client implements Runnable
                         ChannelMsg tm = (ChannelMsg)p.getData();
                         controller.update(tm);
                         break;
+                    case "CRT-MSG":
+                        break;
+                    case "JNC-MSG":
+                        break;
                     default:
                         System.out.println("ERROR");
                 }
@@ -110,6 +114,14 @@ public class Client implements Runnable
             }
             else if (arg instanceof PictureMsg) {
                 Packet p = new Packet("PIC-MSG", arg);
+                output.writeObject(p);
+            }
+            else if (arg instanceof CreateChannelMsg) {
+                Packet p = new Packet("CRT-MSG", arg);
+                output.writeObject(p);
+            }
+            else if (arg instanceof JoinChannelMsg) {
+                Packet p = new Packet("JNC-MSG", arg);
                 output.writeObject(p);
             }
         }
