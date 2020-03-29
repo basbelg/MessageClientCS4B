@@ -48,6 +48,8 @@ public class Controller implements Initializable, BaseController
     public Label userLabel;
     private String currentChannel;
     public Label channelLabel;
+    public Button joinButton;
+    public Button createButton;
 
 
     public void sendButtonClicked() throws IOException {
@@ -187,6 +189,16 @@ public class Controller implements Initializable, BaseController
         {
             chatroomsBar.getItems().add(channels.get(i));
         }
+    }
+
+    public void joinButtonClicked()
+    {
+
+    }
+
+    public void createButtonClicked()
+    {
+        
     }
 }
 
