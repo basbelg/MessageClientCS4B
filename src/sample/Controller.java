@@ -50,7 +50,6 @@ public class Controller implements Initializable, BaseController
     public Label channelLabel;
 
 
-
     public void sendButtonClicked() throws IOException {
         String text = inputField.getText() + "\n";
         inputField.clear();

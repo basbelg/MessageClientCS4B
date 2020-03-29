@@ -23,42 +23,12 @@ public class Login implements BaseController
     private Client client = new Client(this);
     public Button loginButton;
     public TextField loginUserField;
-    public CheckBox chat1;
-    public CheckBox chat2;
-    public CheckBox chat3;
-    public CheckBox chat4;
-    public CheckBox chat5;
-    public CheckBox chat6;
 
     public void loginClicked() throws IOException {
         String user = loginUserField.getText();
         List<String> channels = new ArrayList<>();
 
-        if(chat1.isSelected())
-        {
-            channels.add(chat1.getText());
-        }
-        if(chat2.isSelected())
-        {
-            channels.add(chat2.getText());
-        }
-        if(chat3.isSelected())
-        {
-            channels.add(chat3.getText());
-        }
-        if(chat4.isSelected())
-        {
-            channels.add(chat4.getText());
-        }
-        if(chat5.isSelected())
-        {
-            channels.add(chat5.getText());
-        }
-        if(chat6.isSelected())
-        {
-            channels.add(chat6.getText());
-        }
-        RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
+        RegistrationMsg rm = new RegistrationMsg(user);
         try
         {
             Stage stage = (Stage) loginButton.getScene().getWindow();
