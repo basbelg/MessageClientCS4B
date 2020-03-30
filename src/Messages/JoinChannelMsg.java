@@ -29,6 +29,6 @@ public class JoinChannelMsg implements Serializable
     @Override
     public String toString()
     {
-        return ( " joined " + joinChannel);
+        return (sender + " joined " + joinChannel);
     }
 }

@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -68,54 +69,23 @@ public class Controller implements Initializable, BaseController
                 if(client.getUsername().equals(((CreateChannelMsg) arg).getChannelOwner()))
                 {
                     currentChannel = ((CreateChannelMsg) arg).getChannelName();
+                    client.getSubscribedChannels().add(currentChannel);
+                    client.getChatHistory().put(currentChannel, new ArrayList<>());
                     channelLabel.setText("Channel: " + currentChannel);
                     initChatroomBar(currentChannel);
                     outField.getItems().clear();
-                    List<Serializable> history = (client.getChatHistory().get(currentChannel));
-                    for (int i = 0; i < history.size(); i++) {
-                        if (history.get(i) instanceof ChannelMsg) {
-                            outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg()));
-                        }
-                        else if(history.get(i) instanceof NewUserMsg)
-                        {
-                            outField.getItems().add(new Label(((NewUserMsg) history.get(i)).getNewUser() + " has joined the chat!"));
-                        }
-                        else if(history.get(i) instanceof PictureMsg)
-                        {
-                            try
-                            {
-                                ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) history.get(i)).getPicData());
-                                BufferedImage bufImg = ImageIO.read(bis);
-                                Image image = SwingFXUtils.toFXImage(bufImg, null);
-                                ImageView iv = new ImageView(image);
-                                double oldVar;
-                                if (image.getHeight() > outField.getHeight() / 4) {
-                                    oldVar = iv.getFitHeight();
-                                    iv.setFitHeight(outField.getHeight() / 4);
-                                    iv.setFitWidth(iv.getFitWidth() - (oldVar - iv.getFitHeight()));
-                                }
-                                if (image.getWidth() > outField.getWidth() / 4) {
-                                    oldVar = iv.getFitWidth();
-                                    iv.setFitWidth(outField.getWidth() / 4);
-                                    iv.setFitHeight(iv.getFitHeight() - (oldVar - iv.getFitWidth()));
-                                }
-                                outField.getItems().add(new Label(((PictureMsg) history.get(i)).getSender() + ":"));
-                                outField.getItems().add(iv);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
                 }
             }
             else if(arg instanceof JoinChannelMsg)
             {
                 currentChannel = ((JoinChannelMsg) arg).getJoinChannel();
+                client.getSubscribedChannels().add(currentChannel);
                 channelLabel.setText("Channel: " + currentChannel);
                 outField.getItems().clear();
                 List<Serializable> history = ((JoinChannelMsg) arg).getChatHistory();
+                client.getChatHistory().put(currentChannel, history);
 
-                initChatroomBar(((JoinChannelMsg) arg).getJoinChannel());
+                initChatroomBar(currentChannel);
 
                 for(int i = 0; i < history.size(); i++)
                 {

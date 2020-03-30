@@ -26,6 +26,7 @@ public class Client implements Runnable
 
     public Client(BaseController controller)
     {
+        allChannels = new ArrayList<>();
         subscribedChannels = new ArrayList<>();
         port = 8000;
         this.controller = controller;
@@ -51,7 +52,6 @@ public class Client implements Runnable
                         {
                             allChannels.add(sc);
                         }
-                        controller.update(rm);
                         break;
                     case "PIC-MSG":
                         PictureMsg pm = (PictureMsg)p.getData();
