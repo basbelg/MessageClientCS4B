@@ -28,7 +28,7 @@ public class Login implements BaseController
         String user = loginUserField.getText();
         List<String> channels = new ArrayList<>();
 
-        RegistrationMsg rm = new RegistrationMsg(user);
+        RegistrationMsg rm = new RegistrationMsg(user, new ArrayList<String>());
         try
         {
             Stage stage = (Stage) loginButton.getScene().getWindow();

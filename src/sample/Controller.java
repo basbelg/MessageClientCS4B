@@ -26,6 +26,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.MediaView;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -193,12 +194,23 @@ public class Controller implements Initializable, BaseController
 
     public void joinButtonClicked()
     {
+        Stage stage = new Stage();
+        stage.setTitle("Join Channel");
 
+
+        stage.show();
     }
 
     public void createButtonClicked()
     {
-        
+        Stage stage = new Stage();
+        stage.setTitle("Create Channel");
+        TextField channelNameField = new TextField();
+        Label createChannelLabel = new Label("Channel Name: ");
+        channelNameField.setPromptText("Enter Name...");
+        Pane pane = new Pane(channelNameField, createChannelLabel);
+        stage.setScene(new Scene(pane));
+        stage.show();
     }
 }
 

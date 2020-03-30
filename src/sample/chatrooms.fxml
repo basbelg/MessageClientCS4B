@@ -20,7 +20,7 @@
                 <Button fx:id="addPicButton" layoutX="2.0" layoutY="36.0" mnemonicParsing="false" onMouseClicked="#uploadPicClicked" text="+" />
                 <Label fx:id="userLabel" layoutX="27.0" layoutY="18.0" text="Username" />
             <Button fx:id="joinButton" layoutX="528.0" layoutY="34.0" mnemonicParsing="false" onMouseClicked="#joinButtonClicked" text="Join Channel" />
-            <Button fx:id="createButton" layoutX="528.0" layoutY="70.0" mnemonicParsing="false" text="Create Channel" />
+            <Button fx:id="createButton" layoutX="528.0" layoutY="70.0" mnemonicParsing="false" onMouseClicked="#createButtonClicked" text="Create Channel" />
             </children></AnchorPane>
     </items>
 </SplitPane>
