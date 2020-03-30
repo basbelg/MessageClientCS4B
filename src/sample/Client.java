@@ -21,12 +21,8 @@ public class Client implements Runnable
     private ObjectOutputStream output;
     private Thread thread;
     private int port;
-<<<<<<< HEAD
-    private boolean isRunning = true;
     private HashMap<String, List<Serializable>> chatHistory;
-=======
     private String username;
->>>>>>> origin/master
 
     public Client(BaseController controller)
     {
@@ -51,14 +47,9 @@ public class Client implements Runnable
                 switch(type) {
                     case "REG-MSG":
                         RegistrationMsg rm = (RegistrationMsg)p.getData();
-<<<<<<< HEAD
                         for(String sc : rm.getChannels())
                         {
                             allChannels.add(sc);
-=======
-                        for(String sc : rm.getSubscribedChannels()) {
-                            subscribedChannels.add(sc);
->>>>>>> origin/master
                         }
                         controller.update(rm);
                         break;
@@ -134,15 +125,10 @@ public class Client implements Runnable
                 Packet p = new Packet("TXT-MSG", arg);
                 output.writeObject(p);
             }
-            else if (arg instanceof ChangeChannelMsg) {
-                Packet p = new Packet("CNG-MSG", arg);
-                output.writeObject(p);
-            }
             else if (arg instanceof PictureMsg) {
                 Packet p = new Packet("PIC-MSG", arg);
                 output.writeObject(p);
             }
-<<<<<<< HEAD
             else if (arg instanceof CreateChannelMsg) {
                 Packet p = new Packet("CRT-MSG", arg);
                 output.writeObject(p);
@@ -154,10 +140,9 @@ public class Client implements Runnable
             else if (arg instanceof NewUserMsg) {
                 Packet p = new Packet("NWU-MSG", arg);
                 output.writeObject(p);
-=======
+            }
             else {
                 System.out.println("Client Update - ERROR");
->>>>>>> origin/master
             }
         }
         catch(IOException e) {

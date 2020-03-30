@@ -1,24 +1,15 @@
 package sample;
 
-import Messages.ChangeChannelMsg;
-import Messages.ChannelMsg;
-import Messages.PictureMsg;
-import Messages.RegistrationMsg;
+import Messages.*;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-<<<<<<< HEAD
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.media.MediaView;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
-=======
->>>>>>> origin/master
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -42,7 +33,6 @@ public class Controller implements Initializable, BaseController
     public Label serverLabel;
     private String currentChannel;
     public Label channelLabel;
-<<<<<<< HEAD
     public Button joinButton;
     public Button createButton;
     public TextField channelNameField;
@@ -53,21 +43,16 @@ public class Controller implements Initializable, BaseController
     public ListView channelView;
 
 
-    public void sendButtonClicked() throws IOException {
-=======
-
     public void sendButtonClicked() {
->>>>>>> origin/master
         String text = inputField.getText() + "\n";
         inputField.clear();
         ChannelMsg cm = new ChannelMsg(text, currentChannel);
         client.update(cm);
     }
 
-<<<<<<< HEAD
     public void update(Serializable arg)
     {
-        SwingUtilities.invokeLater(() -> {
+        Platform.runLater(() -> {
             if(arg instanceof NewUserMsg)
             {
                 if(currentChannel.equals(((NewUserMsg) arg).getToChannel()))
@@ -132,19 +117,9 @@ public class Controller implements Initializable, BaseController
             }
             else if(arg instanceof ChannelMsg)
             {
-=======
-    public void update(Serializable arg) {
-        Platform.runLater(() -> {
-            if (arg instanceof RegistrationMsg) {
-                if (((RegistrationMsg) arg).getUsername().equals(client.getUsername())) {
-                    initChatroomBar(((RegistrationMsg) arg).getSubscribedChannels());
-                } else {
-                    outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!"));
-                }
-            } else if (arg instanceof ChannelMsg) {
->>>>>>> origin/master
                 outField.getItems().add(new Label(((ChannelMsg) arg).getSender() + ": " + ((ChannelMsg) arg).getTextMsg()));
-            } else if (arg instanceof PictureMsg) {
+            }
+            else if (arg instanceof PictureMsg) {
                 try {
                     ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) arg).getPicData());
                     BufferedImage bufImg = ImageIO.read(bis);
@@ -174,7 +149,6 @@ public class Controller implements Initializable, BaseController
                 for (int i = 0; i < history.size(); i++) {
                     if (history.get(i) instanceof ChannelMsg) {
                         outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg()));
-<<<<<<< HEAD
                     }
                     else if(history.get(i) instanceof NewUserMsg)
                     {
@@ -184,12 +158,6 @@ public class Controller implements Initializable, BaseController
                     {
                         try
                         {
-=======
-                    } else if (history.get(i) instanceof RegistrationMsg) {
-                        outField.getItems().add(new Label(((RegistrationMsg) history.get(i)).getUsername() + " has joined the chat!"));
-                    } else if (history.get(i) instanceof PictureMsg) {
-                        try {
->>>>>>> origin/master
                             ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) history.get(i)).getPicData());
                             BufferedImage bufImg = ImageIO.read(bis);
                             Image image = SwingFXUtils.toFXImage(bufImg, null);
@@ -245,18 +213,16 @@ public class Controller implements Initializable, BaseController
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) { }
 
-    public void getDataFromLogin(Client c, RegistrationMsg rm, String curChannel, String username) {
+    public void getDataFromLogin(Client c, RegistrationMsg rm, String username) {
         client = c;
         client.SetController(this);
         client.update(rm);
-        currentChannel = curChannel;
         client.setUsername(username);
 
         userLabel.setText(username);
         serverLabel.setText("Server: Connected!");
     }
 
-<<<<<<< HEAD
     public void initChatroomBar(String channel)
     {
         chatroomsBar.getItems().add(channel);
@@ -304,11 +270,6 @@ public class Controller implements Initializable, BaseController
         else
         {
             submitButton.setDisable(true);
-=======
-    public void initChatroomBar(List<String> channels) {
-        for(int i = 0; i < channels.size(); i++) {
-            chatroomsBar.getItems().add(channels.get(i));
->>>>>>> origin/master
         }
     }
 
