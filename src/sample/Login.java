@@ -24,10 +24,11 @@ public class Login implements BaseController
     public Button loginButton;
     public TextField loginUserField;
 
-    public void loginClicked() throws IOException {
+    public void loginClicked() {
         String user = loginUserField.getText();
         List<String> channels = new ArrayList<>();
 
+<<<<<<< HEAD
         RegistrationMsg rm = new RegistrationMsg(user, new ArrayList<String>());
         try
         {
@@ -45,6 +46,49 @@ public class Login implements BaseController
         catch(Exception e)
         {
             e.printStackTrace();
+=======
+        if(chat1.isSelected())
+        {
+            channels.add(chat1.getText());
+        }
+        if(chat2.isSelected())
+        {
+            channels.add(chat2.getText());
+        }
+        if(chat3.isSelected())
+        {
+            channels.add(chat3.getText());
+        }
+        if(chat4.isSelected())
+        {
+            channels.add(chat4.getText());
+        }
+        if(chat5.isSelected())
+        {
+            channels.add(chat5.getText());
+        }
+        if(chat6.isSelected())
+        {
+            channels.add(chat6.getText());
+        }
+
+        if(channels.size() != 0) {
+            RegistrationMsg rm = new RegistrationMsg(user, channels.get(0), channels);
+            try {
+                Stage stage = (Stage) loginButton.getScene().getWindow();
+                stage.close();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("chatrooms.fxml"));
+                Parent root = loader.load();
+                Controller con = loader.getController();
+                con.getDataFromLogin(client, rm, channels.get(0), user);
+                stage = new Stage();
+                stage.setTitle("Chatrooms");
+                stage.setScene(new Scene(root));
+                stage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+>>>>>>> origin/master
         }
     }
 

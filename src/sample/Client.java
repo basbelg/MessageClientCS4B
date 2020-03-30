@@ -2,12 +2,14 @@ package sample;
 
 import Messages.*;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Observable;
 
 public class Client implements Runnable
 {
@@ -19,8 +21,12 @@ public class Client implements Runnable
     private ObjectOutputStream output;
     private Thread thread;
     private int port;
+<<<<<<< HEAD
     private boolean isRunning = true;
     private HashMap<String, List<Serializable>> chatHistory;
+=======
+    private String username;
+>>>>>>> origin/master
 
     public Client(BaseController controller)
     {
@@ -28,35 +34,31 @@ public class Client implements Runnable
         port = 8000;
         this.controller = controller;
         thread = new Thread(this);
-        System.out.print("Before start");
         thread.start();
-        System.out.print("After Start");
     }
 
     @Override
-    public void run()
-    {
-        System.out.print("Entered run");
-        try
-        {
-            System.out.print("Before socket");
+    public void run() {
+        try {
             clientSocket = new Socket("localhost", port);
-            System.out.print("After socket");
             output = new ObjectOutputStream(clientSocket.getOutputStream());
             input = new ObjectInputStream(clientSocket.getInputStream());
 
-            while(isRunning)
-            {
+            while(!thread.isInterrupted()) {
                 //read input from server
                 Packet p = (Packet)input.readObject();
                 String type = p.getType();
-                switch(type)
-                {
+                switch(type) {
                     case "REG-MSG":
                         RegistrationMsg rm = (RegistrationMsg)p.getData();
+<<<<<<< HEAD
                         for(String sc : rm.getChannels())
                         {
                             allChannels.add(sc);
+=======
+                        for(String sc : rm.getSubscribedChannels()) {
+                            subscribedChannels.add(sc);
+>>>>>>> origin/master
                         }
                         controller.update(rm);
                         break;
@@ -91,26 +93,38 @@ public class Client implements Runnable
                 }
             }
         }
-        catch(IOException | ClassNotFoundException e)
-        {
+        catch(IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        finally
-        {
-            isRunning = false;
+        finally {
+            System.out.println("client thread terminated");
         }
     }
 
-    public List<String> getSubscribedChannels()
-    {
+    // need a new button to call this
+    public void terminateThread() {
+        thread.interrupt();
+        try {
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> getSubscribedChannels() {
         return subscribedChannels;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public void update(Serializable arg) {
-
-        try
-        {
+        try {
 
             if (arg instanceof RegistrationMsg) {
                 Packet p = new Packet("REG-MSG", arg);
@@ -128,6 +142,7 @@ public class Client implements Runnable
                 Packet p = new Packet("PIC-MSG", arg);
                 output.writeObject(p);
             }
+<<<<<<< HEAD
             else if (arg instanceof CreateChannelMsg) {
                 Packet p = new Packet("CRT-MSG", arg);
                 output.writeObject(p);
@@ -139,16 +154,18 @@ public class Client implements Runnable
             else if (arg instanceof NewUserMsg) {
                 Packet p = new Packet("NWU-MSG", arg);
                 output.writeObject(p);
+=======
+            else {
+                System.out.println("Client Update - ERROR");
+>>>>>>> origin/master
             }
         }
-        catch(IOException e)
-        {
+        catch(IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void SetController(BaseController con)
-    {
+    public void SetController(BaseController con) {
         controller = con;
     }
 }
