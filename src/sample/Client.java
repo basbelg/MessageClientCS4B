@@ -47,10 +47,11 @@ public class Client implements Runnable
                 switch(type) {
                     case "REG-MSG":
                         RegistrationMsg rm = (RegistrationMsg)p.getData();
-                        for(String sc : rm.getChannels())
-                        {
-                            allChannels.add(sc);
-                        }
+//                        for(String sc : rm.getChannels())
+//                        {
+//                            allChannels.add(sc);
+//                        }
+                        allChannels.add("welcome");
                         controller.update(rm);
                         break;
                     case "PIC-MSG":

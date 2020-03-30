@@ -1,5 +1,6 @@
 package sample;
 
+import Messages.JoinChannelMsg;
 import Messages.RegistrationMsg;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,7 +29,7 @@ public class Login implements BaseController
         String user = loginUserField.getText();
         List<String> channels = new ArrayList<>();
 
-        RegistrationMsg rm = new RegistrationMsg(user, new ArrayList<String>());
+        RegistrationMsg rm = new RegistrationMsg(user/*, new ArrayList<String>()*/);
         try
         {
             Stage stage = (Stage) loginButton.getScene().getWindow();

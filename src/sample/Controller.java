@@ -217,6 +217,9 @@ public class Controller implements Initializable, BaseController
         client = c;
         client.SetController(this);
         client.update(rm);
+        JoinChannelMsg jcm = new JoinChannelMsg(rm.getUsername());
+        jcm.setJoinChannel("welcome");
+        client.update(jcm);
         client.setUsername(username);
 
         userLabel.setText(username);
