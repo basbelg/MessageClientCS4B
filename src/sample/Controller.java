@@ -207,19 +207,24 @@ public class Controller implements Initializable, BaseController
         stage.setTitle("Create Channel");
         TextField channelNameField = new TextField();
         Label createChannelLabel = new Label("Channel Name: ");
+        Button submitButton = new Button("Submit");
         channelNameField.setPromptText("Enter Name...");
         AnchorPane pane = new AnchorPane();
         pane.setMinHeight(200);
         pane.setMinWidth(400);
         pane.getChildren().add(createChannelLabel);
         pane.getChildren().add(channelNameField);
+        pane.getChildren().add(submitButton);
         pane.getChildren().get(0).setLayoutX(90);
         pane.getChildren().get(0).setLayoutY(90);
         pane.getChildren().get(1).setLayoutX(180);
         pane.getChildren().get(1).setLayoutY(85);
+        pane.getChildren().get(2).setLayoutX(180);
+        pane.getChildren().get(2).setLayoutY(150);
         stage.setScene(new Scene(pane));
         stage.show();
     }
+
 }
 
 
