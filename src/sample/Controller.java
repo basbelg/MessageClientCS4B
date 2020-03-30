@@ -208,7 +208,15 @@ public class Controller implements Initializable, BaseController
         TextField channelNameField = new TextField();
         Label createChannelLabel = new Label("Channel Name: ");
         channelNameField.setPromptText("Enter Name...");
-        Pane pane = new Pane(channelNameField, createChannelLabel);
+        AnchorPane pane = new AnchorPane();
+        pane.setMinHeight(200);
+        pane.setMinWidth(400);
+        pane.getChildren().add(createChannelLabel);
+        pane.getChildren().add(channelNameField);
+        pane.getChildren().get(0).setLayoutX(90);
+        pane.getChildren().get(0).setLayoutY(90);
+        pane.getChildren().get(1).setLayoutX(180);
+        pane.getChildren().get(1).setLayoutY(85);
         stage.setScene(new Scene(pane));
         stage.show();
     }
