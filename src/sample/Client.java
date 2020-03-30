@@ -11,6 +11,7 @@ import java.util.Observable;
 public class Client implements Runnable
 {
     private BaseController controller;
+    private List<String> allChannels;
     private List<String> subscribedChannels;
     private Socket clientSocket;
     private ObjectInputStream input;
@@ -52,9 +53,9 @@ public class Client implements Runnable
                 {
                     case "REG-MSG":
                         RegistrationMsg rm = (RegistrationMsg)p.getData();
-                        for(String sc : rm.getSubscribedChannels())
+                        for(String sc : rm.getChannels())
                         {
-                            subscribedChannels.add(sc);
+                            allChannels.add(sc);
                         }
                         controller.update(rm);
                         break;

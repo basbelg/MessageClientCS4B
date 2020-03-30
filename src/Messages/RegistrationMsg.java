@@ -7,9 +7,9 @@ public class RegistrationMsg implements Serializable {
     private String username;
     private List<String> channels;
 
-    public RegistrationMsg(String username, List<String> subscribedChannels) {
+    public RegistrationMsg(String username, List<String> channels) {
         this.username = username;
-        this.channels = subscribedChannels;
+        this.channels = channels;
     }
 
     public String getUsername() {
@@ -18,7 +18,7 @@ public class RegistrationMsg implements Serializable {
 
     public String toString() {return username + " has connected";}
 
-    public List<String> getSubscribedChannels() {
+    public List<String> getChannels() {
         return channels;
     }
 }

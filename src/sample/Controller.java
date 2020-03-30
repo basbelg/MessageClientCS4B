@@ -51,6 +51,12 @@ public class Controller implements Initializable, BaseController
     public Label channelLabel;
     public Button joinButton;
     public Button createButton;
+    public TextField channelNameField;
+    public Button submitButton;
+    public Button confirmJoinButton;
+    public Button cancelCreateButton;
+    public Button cancelJoinButton;
+    public ListView channelView;
 
 
     public void sendButtonClicked() throws IOException {
@@ -63,10 +69,10 @@ public class Controller implements Initializable, BaseController
     public void update(Serializable arg)
     {
         SwingUtilities.invokeLater(() -> {
-            if(arg instanceof RegistrationMsg)
+            if(arg instanceof NewUserMsg)
             {
                 outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!"));
-                initChatroomBar(((RegistrationMsg) arg).getSubscribedChannels());
+                initChatroomBar(((RegistrationMsg) arg).getChannels());
             }
             else if(arg instanceof ChannelMsg)
             {
@@ -192,39 +198,62 @@ public class Controller implements Initializable, BaseController
         }
     }
 
-    public void joinButtonClicked()
+    public void joinButtonClicked() throws IOException
     {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("joinChannel.fxml"));
+        Parent root = loader.load();
         Stage stage = new Stage();
         stage.setTitle("Join Channel");
-
-
+        stage.setScene(new Scene(root));
         stage.show();
     }
 
-    public void createButtonClicked()
+    public void onJoinChannelClicked()
     {
+        channelView.getSelectionModel();
+    }
+
+    public void createButtonClicked() throws IOException
+    {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("createChannel.fxml"));
+        Parent root = loader.load();
         Stage stage = new Stage();
         stage.setTitle("Create Channel");
-        TextField channelNameField = new TextField();
-        Label createChannelLabel = new Label("Channel Name: ");
-        Button submitButton = new Button("Submit");
-        channelNameField.setPromptText("Enter Name...");
-        AnchorPane pane = new AnchorPane();
-        pane.setMinHeight(200);
-        pane.setMinWidth(400);
-        pane.getChildren().add(createChannelLabel);
-        pane.getChildren().add(channelNameField);
-        pane.getChildren().add(submitButton);
-        pane.getChildren().get(0).setLayoutX(90);
-        pane.getChildren().get(0).setLayoutY(90);
-        pane.getChildren().get(1).setLayoutX(180);
-        pane.getChildren().get(1).setLayoutY(85);
-        pane.getChildren().get(2).setLayoutX(180);
-        pane.getChildren().get(2).setLayoutY(150);
-        stage.setScene(new Scene(pane));
+        stage.setScene(new Scene(root));
         stage.show();
     }
 
+    public void onSubmitClicked()
+    {
+        Stage stage = (Stage) submitButton.getScene().getWindow();
+        CreateChannelMsg cm = new CreateChannelMsg(channelNameField.getText());
+        client.update(cm);
+        stage.close();
+    }
+
+    public void onChannelNameInChanged()
+    {
+        if(!channelNameField.getText().equals(""))
+        {
+            submitButton.setDisable(false);
+        }
+        else
+        {
+            submitButton.setDisable(true);
+        }
+    }
+
+    public void onCancelCreateClicked()
+    {
+        Stage stage = (Stage) submitButton.getScene().getWindow();
+        stage.close();
+    }
+
+    public void onCancelJoinClicked()
+    {
+        Stage stage = (Stage) confirmJoinButton.getScene().getWindow();
+        stage.close();
+    }
 }
 
 
