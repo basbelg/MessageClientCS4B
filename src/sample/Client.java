@@ -52,6 +52,7 @@ public class Client implements Runnable
 //                            allChannels.add(sc);
 //                        }
                         allChannels.add("welcome");
+                        subscribedChannels.add("welcome");
                         controller.update(rm);
                         break;
                     case "PIC-MSG":

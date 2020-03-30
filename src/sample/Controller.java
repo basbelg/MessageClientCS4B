@@ -68,6 +68,7 @@ public class Controller implements Initializable, BaseController
             {
                 currentChannel = ((JoinChannelMsg) arg).getJoinChannel();
                 channelLabel.setText("Channel: " + currentChannel);
+                System.out.println(currentChannel);
                 outField.getItems().clear();
                 List<Serializable> history = ((JoinChannelMsg) arg).getChatHistory();
 
@@ -217,8 +218,7 @@ public class Controller implements Initializable, BaseController
         client = c;
         client.SetController(this);
         client.update(rm);
-        JoinChannelMsg jcm = new JoinChannelMsg(rm.getUsername());
-        jcm.setJoinChannel("welcome");
+        JoinChannelMsg jcm = new JoinChannelMsg("welcome");
         client.update(jcm);
         client.setUsername(username);
 
