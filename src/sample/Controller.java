@@ -41,6 +41,7 @@ public class Controller implements Initializable, BaseController
     public Button cancelCreateButton;
     public Button cancelJoinButton;
     public ListView channelView;
+    public Button disconnectButton;
 
 
     public void sendButtonClicked() {
@@ -62,7 +63,50 @@ public class Controller implements Initializable, BaseController
             }
             else if(arg instanceof CreateChannelMsg)
             {
+                channelView.getItems().add(((CreateChannelMsg) arg).getChannelName());
 
+                if(client.getUsername().equals(((CreateChannelMsg) arg).getChannelOwner()))
+                {
+                    currentChannel = ((CreateChannelMsg) arg).getChannelName();
+                    channelLabel.setText("Channel: " + currentChannel);
+                    initChatroomBar(currentChannel);
+                    outField.getItems().clear();
+                    List<Serializable> history = (client.getChatHistory().get(currentChannel));
+                    for (int i = 0; i < history.size(); i++) {
+                        if (history.get(i) instanceof ChannelMsg) {
+                            outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg()));
+                        }
+                        else if(history.get(i) instanceof NewUserMsg)
+                        {
+                            outField.getItems().add(new Label(((NewUserMsg) history.get(i)).getNewUser() + " has joined the chat!"));
+                        }
+                        else if(history.get(i) instanceof PictureMsg)
+                        {
+                            try
+                            {
+                                ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) history.get(i)).getPicData());
+                                BufferedImage bufImg = ImageIO.read(bis);
+                                Image image = SwingFXUtils.toFXImage(bufImg, null);
+                                ImageView iv = new ImageView(image);
+                                double oldVar;
+                                if (image.getHeight() > outField.getHeight() / 4) {
+                                    oldVar = iv.getFitHeight();
+                                    iv.setFitHeight(outField.getHeight() / 4);
+                                    iv.setFitWidth(iv.getFitWidth() - (oldVar - iv.getFitHeight()));
+                                }
+                                if (image.getWidth() > outField.getWidth() / 4) {
+                                    oldVar = iv.getFitWidth();
+                                    iv.setFitWidth(outField.getWidth() / 4);
+                                    iv.setFitHeight(iv.getFitHeight() - (oldVar - iv.getFitWidth()));
+                                }
+                                outField.getItems().add(new Label(((PictureMsg) history.get(i)).getSender() + ":"));
+                                outField.getItems().add(iv);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
             }
             else if(arg instanceof JoinChannelMsg)
             {
@@ -141,45 +185,6 @@ public class Controller implements Initializable, BaseController
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else if (arg instanceof ChangeChannelMsg) {
-                currentChannel = ((ChangeChannelMsg) arg).getSwappedChannel();
-                channelLabel.setText("Channel: " + currentChannel);
-                outField.getItems().clear();
-                List<Serializable> history = ((ChangeChannelMsg) arg).getChatHistory();
-                for (int i = 0; i < history.size(); i++) {
-                    if (history.get(i) instanceof ChannelMsg) {
-                        outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg()));
-                    }
-                    else if(history.get(i) instanceof NewUserMsg)
-                    {
-                        outField.getItems().add(new Label(((NewUserMsg) history.get(i)).getNewUser() + " has joined the chat!"));
-                    }
-                    else if(history.get(i) instanceof PictureMsg)
-                    {
-                        try
-                        {
-                            ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) history.get(i)).getPicData());
-                            BufferedImage bufImg = ImageIO.read(bis);
-                            Image image = SwingFXUtils.toFXImage(bufImg, null);
-                            ImageView iv = new ImageView(image);
-                            double oldVar;
-                            if (image.getHeight() > outField.getHeight() / 4) {
-                                oldVar = iv.getFitHeight();
-                                iv.setFitHeight(outField.getHeight() / 4);
-                                iv.setFitWidth(iv.getFitWidth() - (oldVar - iv.getFitHeight()));
-                            }
-                            if (image.getWidth() > outField.getWidth() / 4) {
-                                oldVar = iv.getFitWidth();
-                                iv.setFitWidth(outField.getWidth() / 4);
-                                iv.setFitHeight(iv.getFitHeight() - (oldVar - iv.getFitWidth()));
-                            }
-                            outField.getItems().add(new Label(((PictureMsg) history.get(i)).getSender() + ":"));
-                            outField.getItems().add(iv);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
             }
             else {
                 System.out.println("Controller Update ERROR: No matching message type");
@@ -204,9 +209,45 @@ public class Controller implements Initializable, BaseController
     public void swapButtonClicked() {
         if(((String)chatroomsBar.getValue()) != null) {
             currentChannel = (String) chatroomsBar.getValue();
-            ChangeChannelMsg cc = new ChangeChannelMsg(currentChannel);
-            client.update(cc);
+            channelLabel.setText("Channel: " + currentChannel);
+            outField.getItems().clear();
+            List<Serializable> history = (client.getChatHistory().get(currentChannel));
+            for (int i = 0; i < history.size(); i++) {
+                if (history.get(i) instanceof ChannelMsg) {
+                    outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg()));
+                }
+                else if(history.get(i) instanceof NewUserMsg)
+                {
+                    outField.getItems().add(new Label(((NewUserMsg) history.get(i)).getNewUser() + " has joined the chat!"));
+                }
+                else if(history.get(i) instanceof PictureMsg)
+                {
+                    try
+                    {
+                        ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) history.get(i)).getPicData());
+                        BufferedImage bufImg = ImageIO.read(bis);
+                        Image image = SwingFXUtils.toFXImage(bufImg, null);
+                        ImageView iv = new ImageView(image);
+                        double oldVar;
+                        if (image.getHeight() > outField.getHeight() / 4) {
+                            oldVar = iv.getFitHeight();
+                            iv.setFitHeight(outField.getHeight() / 4);
+                            iv.setFitWidth(iv.getFitWidth() - (oldVar - iv.getFitHeight()));
+                        }
+                        if (image.getWidth() > outField.getWidth() / 4) {
+                            oldVar = iv.getFitWidth();
+                            iv.setFitWidth(outField.getWidth() / 4);
+                            iv.setFitHeight(iv.getFitHeight() - (oldVar - iv.getFitWidth()));
+                        }
+                        outField.getItems().add(new Label(((PictureMsg) history.get(i)).getSender() + ":"));
+                        outField.getItems().add(iv);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
+
     }
 
 
@@ -236,11 +277,27 @@ public class Controller implements Initializable, BaseController
         stage.setTitle("Join Channel");
         stage.setScene(new Scene(root));
         stage.show();
+
+        List<String> subbedChannels = client.getSubscribedChannels();
+        List<String> allChannels = client.getAllChannels();
+
+        for(String channel : allChannels)
+        {
+            if(!subbedChannels.contains(channel))
+            {
+                channelView.getItems().add(new Label(channel));
+            }
+        }
+
     }
 
-    public void onJoinChannelClicked()
-    {
-        channelView.getSelectionModel();
+    public void onJoinChannelClicked() {
+        if (!channelView.getSelectionModel().isEmpty())
+        {
+            String joinChannel = (String) channelView.getSelectionModel().getSelectedItem();
+            JoinChannelMsg jm = new JoinChannelMsg(joinChannel);
+            client.update(jm);
+        }
     }
 
     public void createButtonClicked() throws IOException
@@ -283,6 +340,12 @@ public class Controller implements Initializable, BaseController
     {
         Stage stage = (Stage) confirmJoinButton.getScene().getWindow();
         stage.close();
+    }
+
+    public void onDisconnectClicked()
+    {
+        client.terminateThread();
+        outField.getItems().add(new Label("Disconnected from Server!"));
     }
 }
 

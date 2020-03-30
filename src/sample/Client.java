@@ -55,19 +55,22 @@ public class Client implements Runnable
                         break;
                     case "PIC-MSG":
                         PictureMsg pm = (PictureMsg)p.getData();
+                        chatHistory.get(pm.getPublishToChannel()).add(pm.getPicData());
                         controller.update(pm);
-                        break;
-                    case "CNG-MSG":
-                        ChangeChannelMsg cm = (ChangeChannelMsg)p.getData();
-                        controller.update(cm);
                         break;
                     case "TXT-MSG":
                         ChannelMsg tm = (ChannelMsg)p.getData();
+                        chatHistory.get(tm.getPublishToChannel()).add(tm.getTextMsg());
                         controller.update(tm);
                         break;
                     case "CRT-MSG":
                         CreateChannelMsg crm = (CreateChannelMsg)p.getData();
                         allChannels.add(crm.getChannelName());
+                        if(username.equals(crm.getChannelOwner()))
+                        {
+                            chatHistory.put(crm.getChannelName(), new ArrayList<Serializable>());
+                            subscribedChannels.add(crm.getChannelName());
+                        }
                         break;
                     case "JNC-MSG":
                         JoinChannelMsg jm = (JoinChannelMsg)p.getData();
@@ -152,5 +155,13 @@ public class Client implements Runnable
 
     public void SetController(BaseController con) {
         controller = con;
+    }
+
+    public List<String> getAllChannels() {
+        return allChannels;
+    }
+
+    public HashMap<String, List<Serializable>> getChatHistory() {
+        return chatHistory;
     }
 }
