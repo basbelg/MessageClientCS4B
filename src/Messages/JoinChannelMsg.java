@@ -3,7 +3,7 @@ package Messages;
 import java.io.Serializable;
 import java.util.List;
 
-public class JoinChannelMsg
+public class JoinChannelMsg implements Serializable
 {
     private String joinChannel;
     private String sender;

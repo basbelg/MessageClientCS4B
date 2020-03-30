@@ -5,6 +5,7 @@ import Messages.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 
@@ -19,7 +20,7 @@ public class Client implements Runnable
     private Thread thread;
     private int port;
     private boolean isRunning = true;
-    private Serializable latestMessage;
+    private HashMap<String, List<Serializable>> chatHistory;
 
     public Client(BaseController controller)
     {
@@ -72,8 +73,18 @@ public class Client implements Runnable
                         controller.update(tm);
                         break;
                     case "CRT-MSG":
+                        CreateChannelMsg crm = (CreateChannelMsg)p.getData();
+                        allChannels.add(crm.getChannelName());
                         break;
                     case "JNC-MSG":
+                        JoinChannelMsg jm = (JoinChannelMsg)p.getData();
+                        chatHistory.put(jm.getJoinChannel(), jm.getChatHistory());
+                        controller.update(jm);
+                        break;
+                    case "NWU-MSG":
+                        NewUserMsg nm = (NewUserMsg)p.getData();
+                        chatHistory.get(nm.getToChannel()).add(nm.getNewUser() + " has joined the chat!");
+                        controller.update(nm);
                         break;
                     default:
                         System.out.println("ERROR");
@@ -123,6 +134,10 @@ public class Client implements Runnable
             }
             else if (arg instanceof JoinChannelMsg) {
                 Packet p = new Packet("JNC-MSG", arg);
+                output.writeObject(p);
+            }
+            else if (arg instanceof NewUserMsg) {
+                Packet p = new Packet("NWU-MSG", arg);
                 output.writeObject(p);
             }
         }

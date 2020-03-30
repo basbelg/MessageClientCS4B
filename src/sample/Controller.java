@@ -71,8 +71,65 @@ public class Controller implements Initializable, BaseController
         SwingUtilities.invokeLater(() -> {
             if(arg instanceof NewUserMsg)
             {
-                outField.getItems().add(new Label(((RegistrationMsg) arg).getUsername() + " has joined the chat!"));
-                initChatroomBar(((RegistrationMsg) arg).getChannels());
+                if(currentChannel.equals(((NewUserMsg) arg).getToChannel()))
+                {
+                    outField.getItems().add(new Label(((NewUserMsg) arg).getNewUser() + " has joined the chat!"));
+                }
+            }
+            else if(arg instanceof CreateChannelMsg)
+            {
+
+            }
+            else if(arg instanceof JoinChannelMsg)
+            {
+                currentChannel = ((JoinChannelMsg) arg).getJoinChannel();
+                channelLabel.setText("Channel: " + currentChannel);
+                outField.getItems().clear();
+                List<Serializable> history = ((JoinChannelMsg) arg).getChatHistory();
+
+                initChatroomBar(((JoinChannelMsg) arg).getJoinChannel());
+
+                for(int i = 0; i < history.size(); i++)
+                {
+                    if(history.get(i) instanceof ChannelMsg)
+                    {
+                        outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg()));
+                    }
+                    else if(history.get(i) instanceof NewUserMsg)
+                    {
+                        outField.getItems().add(new Label(((NewUserMsg) history.get(i)).getNewUser() + " has joined the chat!"));
+                    }
+                    else if(history.get(i) instanceof PictureMsg)
+                    {
+                        try
+                        {
+                            ByteArrayInputStream bis = new ByteArrayInputStream(((PictureMsg) history.get(i)).getPicData());
+                            BufferedImage bufImg = ImageIO.read(bis);
+                            Image image = SwingFXUtils.toFXImage(bufImg, null);
+                            ImageView iv = new ImageView(image);
+                            double oldVar;
+                            if(image.getHeight() > outField.getHeight()/4)
+                            {
+                                oldVar = iv.getFitHeight();
+                                iv.setFitHeight(outField.getHeight()/4);
+                                iv.setFitWidth(iv.getFitWidth() - (oldVar - iv.getFitHeight()));
+                            }
+                            if(image.getWidth() > outField.getWidth()/4)
+                            {
+                                oldVar = iv.getFitWidth();
+                                iv.setFitWidth(outField.getWidth()/4);
+                                iv.setFitHeight(iv.getFitHeight() - (oldVar - iv.getFitWidth()));
+                            }
+                            outField.getItems().add(new Label(((PictureMsg) arg).getSender() + ":"));
+                            outField.getItems().add(iv);
+                        }
+                        catch(IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
             }
             else if(arg instanceof ChannelMsg)
             {
@@ -119,9 +176,9 @@ public class Controller implements Initializable, BaseController
                     {
                         outField.getItems().add(new Label(((ChannelMsg) history.get(i)).getSender() + ": " + ((ChannelMsg) history.get(i)).getTextMsg()));
                     }
-                    else if(history.get(i) instanceof RegistrationMsg)
+                    else if(history.get(i) instanceof NewUserMsg)
                     {
-                        outField.getItems().add(new Label(((RegistrationMsg) history.get(i)).getUsername() + " has joined the chat!"));
+                        outField.getItems().add(new Label(((NewUserMsg) history.get(i)).getNewUser() + " has joined the chat!"));
                     }
                     else if(history.get(i) instanceof PictureMsg)
                     {
@@ -190,12 +247,9 @@ public class Controller implements Initializable, BaseController
         currentChannel = curChannel;
     }
 
-    public void initChatroomBar(List<String> channels)
+    public void initChatroomBar(String channel)
     {
-        for(int i = 0; i < channels.size(); i++)
-        {
-            chatroomsBar.getItems().add(channels.get(i));
-        }
+        chatroomsBar.getItems().add(channel);
     }
 
     public void joinButtonClicked() throws IOException
