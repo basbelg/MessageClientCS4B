@@ -24,7 +24,7 @@ public class Login implements BaseController
     public Button loginButton;
     public TextField loginUserField;
 
-    public void loginClicked() throws IOException {
+    public void loginClicked() {
         String user = loginUserField.getText();
         List<String> channels = new ArrayList<>();
 
@@ -40,7 +40,7 @@ public class Login implements BaseController
             stage.setTitle("Chatrooms");
             stage.setScene(new Scene(root));
             stage.show();
-            con.getDataFromLogin(client, rm, channels.get(0));
+            con.getDataFromLogin(client, rm, user);
         }
         catch(Exception e)
         {
