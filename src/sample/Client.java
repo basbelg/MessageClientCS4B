@@ -71,6 +71,7 @@ public class Client implements Runnable
                             chatHistory.put(crm.getChannelName(), new ArrayList<Serializable>());
                             subscribedChannels.add(crm.getChannelName());
                         }
+                        controller.update(crm);
                         break;
                     case "JNC-MSG":
                         JoinChannelMsg jm = (JoinChannelMsg)p.getData();
@@ -79,7 +80,7 @@ public class Client implements Runnable
                         break;
                     case "NWU-MSG":
                         NewUserMsg nm = (NewUserMsg)p.getData();
-                        chatHistory.get(nm.getToChannel()).add(nm.getNewUser() + " has joined the chat!");
+                        chatHistory.get(nm.getToChannel()).add(nm);
                         controller.update(nm);
                         break;
                     default:

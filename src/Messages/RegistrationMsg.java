@@ -9,7 +9,6 @@ public class RegistrationMsg implements Serializable {
 
     public RegistrationMsg(String username) {
         this.username = username;
-        this.channels = channels;
     }
 
     public String getUsername() {
@@ -20,5 +19,9 @@ public class RegistrationMsg implements Serializable {
 
     public List<String> getChannels() {
         return channels;
+    }
+
+    public void setChannels(List<String> channels) {
+        this.channels = channels;
     }
 }

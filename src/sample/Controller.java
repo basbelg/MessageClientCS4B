@@ -36,20 +36,17 @@ public class Controller implements Initializable, BaseController
     public Label channelLabel;
     public Button joinButton;
     public Button createButton;
-    public TextField channelNameField;
-    public Button submitButton;
-    public Button confirmJoinButton;
-    public Button cancelCreateButton;
-    public Button cancelJoinButton;
-    public ListView channelView;
     public Button disconnectButton;
 
 
     public void sendButtonClicked() {
-        String text = inputField.getText() + "\n";
+        if(!client.getSubscribedChannels().isEmpty())
+        {
+            String text = inputField.getText() + "\n";
+            ChannelMsg cm = new ChannelMsg(text, currentChannel);
+            client.update(cm);
+        }
         inputField.clear();
-        ChannelMsg cm = new ChannelMsg(text, currentChannel);
-        client.update(cm);
     }
 
     public void update(Serializable arg)
@@ -64,8 +61,6 @@ public class Controller implements Initializable, BaseController
             }
             else if(arg instanceof CreateChannelMsg)
             {
-                channelView.getItems().add(((CreateChannelMsg) arg).getChannelName());
-
                 if(client.getUsername().equals(((CreateChannelMsg) arg).getChannelOwner()))
                 {
                     currentChannel = ((CreateChannelMsg) arg).getChannelName();
@@ -163,17 +158,21 @@ public class Controller implements Initializable, BaseController
     }
 
     public void uploadPicClicked() throws IOException {
-        Stage stage = (Stage) addPicButton.getScene().getWindow();
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("jpg files", "*.jpg"));
-        fileChooser.setTitle("Open Resource File");
-        File file = fileChooser.showOpenDialog(stage);
-        BufferedImage bufImg = ImageIO.read(file);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(bufImg, "jpg", bos);
-        byte [] picData = bos.toByteArray();
-        PictureMsg pm = new PictureMsg(picData, currentChannel);
-        client.update(pm);
+        if(!client.getSubscribedChannels().isEmpty())
+        {
+            Stage stage = (Stage) addPicButton.getScene().getWindow();
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("jpg files", "*.jpg"));
+            fileChooser.setTitle("Open Resource File");
+            File file = fileChooser.showOpenDialog(stage);
+            BufferedImage bufImg = ImageIO.read(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(bufImg, "jpg", bos);
+            byte [] picData = bos.toByteArray();
+            PictureMsg pm = new PictureMsg(picData, currentChannel);
+            client.update(pm);
+        }
+
     }
 
     public void swapButtonClicked() {
@@ -243,6 +242,7 @@ public class Controller implements Initializable, BaseController
     {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("joinChannel.fxml"));
         Parent root = loader.load();
+        JoinController jc = loader.getController();
         Stage stage = new Stage();
         stage.setTitle("Join Channel");
         stage.setScene(new Scene(root));
@@ -251,66 +251,28 @@ public class Controller implements Initializable, BaseController
         List<String> subbedChannels = client.getSubscribedChannels();
         List<String> allChannels = client.getAllChannels();
 
-        for(String channel : allChannels)
-        {
-            if(!subbedChannels.contains(channel))
-            {
-                channelView.getItems().add(new Label(channel));
-            }
-        }
-
+        jc.displayTable(subbedChannels, allChannels);
+        jc.connectController(this);
     }
 
-    public void onJoinChannelClicked() {
-        if (!channelView.getSelectionModel().isEmpty())
-        {
-            String joinChannel = (String) channelView.getSelectionModel().getSelectedItem();
-            JoinChannelMsg jm = new JoinChannelMsg(joinChannel);
-            client.update(jm);
-        }
+    public Client getClient()
+    {
+        return client;
     }
 
     public void createButtonClicked() throws IOException
     {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("createChannel.fxml"));
         Parent root = loader.load();
+        CreateController cc = loader.getController();
         Stage stage = new Stage();
         stage.setTitle("Create Channel");
         stage.setScene(new Scene(root));
         stage.show();
+        cc.connectController(this);
     }
 
-    public void onSubmitClicked()
-    {
-        Stage stage = (Stage) submitButton.getScene().getWindow();
-        CreateChannelMsg cm = new CreateChannelMsg(channelNameField.getText());
-        client.update(cm);
-        stage.close();
-    }
 
-    public void onChannelNameInChanged()
-    {
-        if(!channelNameField.getText().equals(""))
-        {
-            submitButton.setDisable(false);
-        }
-        else
-        {
-            submitButton.setDisable(true);
-        }
-    }
-
-    public void onCancelCreateClicked()
-    {
-        Stage stage = (Stage) submitButton.getScene().getWindow();
-        stage.close();
-    }
-
-    public void onCancelJoinClicked()
-    {
-        Stage stage = (Stage) confirmJoinButton.getScene().getWindow();
-        stage.close();
-    }
 
     public void onDisconnectClicked()
     {
